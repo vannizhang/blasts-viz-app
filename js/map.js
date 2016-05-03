@@ -59,8 +59,8 @@ function(Map, Graphic, GraphicsLayer, Point, SimpleMarkerSymbol, Color) {
         map.getLayer('blastHighlightLayer').add(graphic);  
     }    
     
-    // zoomToBlastSite = function(location){
-    //     // map.setCenter()
-    // }
+    zoomToBlastSite = function(location){
+        map.centerAt(new Point(location[0], location[1]));
+    }
   
 });

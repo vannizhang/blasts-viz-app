@@ -86,7 +86,8 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             return 0.3;
         })
         .on('click', function(d){
-            console.log(d);
+            // console.log(d);
+            zoomToBlastSite([d.Longitude, d.Latitude])
         })
         .on('mouseover', function(d){
             d3.select(this)
