@@ -61,9 +61,9 @@ var radiusScale = d3.scale.linear()
     .range([0, 10]);  
     
 var colorScale = d3.scale.linear()
-    .domain([1, 8])
-    .range(['#2c7bb6', '#d7191c']);
-    // .range(['#FFFFFF', '#FFFF00', '#FF5300', '#B5004D']);
+    .domain([0, 2, 4, 6])
+    // .range(['#2c7bb6', '#d7191c']);
+    .range(['#B5004D', '#FF5300', '#FFFF00', '#FFFFFF']);
     
 // Get the data
 d3.csv("./data/blast-data.csv", function(error, data) {
@@ -86,24 +86,24 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             return 2;
         })
         .style("fill", function(d) {
-            var mag = d.Magnitude;
-            var color;
-            switch (true) {
-                case (mag < 2):
-                    color = '#FFFFFF';
-                    break;
-                case (mag >= 2 && mag < 4):
-                    color = '#FFFF00';
-                    break;
-                case (mag >= 4 && mag < 6):
-                    color = '#FF5300';
-                    break;
-                case (mag >= 6):
-                    color = '#B5004D';
-                    break;
-            }
-            return color;
-            // return colorScale(+d.Magnitude);
+            // var mag = d.Magnitude;
+            // var color;
+            // switch (true) {
+            //     case (mag < 2):
+            //         color = '#FFFFFF';
+            //         break;
+            //     case (mag >= 2 && mag < 4):
+            //         color = '#FFFF00';
+            //         break;
+            //     case (mag >= 4 && mag < 6):
+            //         color = '#FF5300';
+            //         break;
+            //     case (mag >= 6):
+            //         color = '#B5004D';
+            //         break;
+            // }
+            // return color;
+            return colorScale(+d.Magnitude);
         })
         .style("opacity", function(d) {
             return 0.3;
