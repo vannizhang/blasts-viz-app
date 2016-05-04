@@ -1,7 +1,8 @@
 var startDate = new Date(1960, 1, 1);
-var endDate = new Date(2016, 5, 3);
+var endDate = new Date(2016, 4, 30);
 var docWidth = $(document).width();
 var docHeight = $(document).height();
+var showCircleWithinCurrentExtent;
 
 // Set the dimensions of the canvas / graph
 var margin = {top: 20, right: 20, bottom: 20, left: 40},
@@ -26,7 +27,7 @@ var xScale = d3.time.scale()
     .range([0, width - margin.left - margin.right]);
     
 var yScale = d3.scale.linear()
-    .domain([0, 8])
+    .domain([1, 8])
     .range([(height - margin.top), 0]);
 
 // Define the axes
@@ -59,6 +60,11 @@ var radiusScale = d3.scale.linear()
     .domain([0, 10])
     .range([0, 10]);  
     
+var colorScale = d3.scale.linear()
+    .domain([1, 8])
+    .range(['#2c7bb6', '#d7191c']);
+    // .range(['#FFFFFF', '#FFFF00', '#FF5300', '#B5004D']);
+    
 // Get the data
 d3.csv("./data/blast-data.csv", function(error, data) {
 
@@ -80,7 +86,24 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             return 2;
         })
         .style("fill", function(d) {
-            return '#9C9C9C';
+            var mag = d.Magnitude;
+            // var color;
+            // switch (true) {
+            //     case (mag < 2):
+            //         color = '#FFFFFF';
+            //         break;
+            //     case (mag >= 2 && mag < 4):
+            //         color = '#FFFF00';
+            //         break;
+            //     case (mag >= 4 && mag < 6):
+            //         color = '#FF5300';
+            //         break;
+            //     case (mag >= 6):
+            //         color = '#B5004D';
+            //         break;
+            // }
+            // return color;
+            return colorScale(+d.Magnitude);
         })
         .style("opacity", function(d) {
             return 0.3;
@@ -108,41 +131,55 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         .on("dragend", dragend);
 
     function dragmove(d) {
-        // console.log(d3.select(this).attr('class'));
+        // console.log(xScale(endDate));
+        var x = d3.event.x,
+        xMin = xScale(startDate),
+        xMax = xScale(endDate);
+        x = (x < xMin) ? xMin : x;
+        x = (x > xMax) ? xMax : x;
+        
+        var y = d3.event.y,
+        yMin = yScale(8),
+        yMax = yScale(1);
+        y = (y < yMin) ? yMin : y;
+        y = (y > yMax) ? yMax : y;
+        
         if(d3.select(this).attr('class') == 'vLine'){
             d3.select(this)
-            .attr("x1", d3.event.x)
-            .attr("x2", d3.event.x);   
+            .attr("x1", x)
+            .attr("x2", x);   
         } else {
             d3.select(this)
-            .attr("y1", d3.event.y)
-            .attr("y2", d3.event.y);  
+            .attr("y1", y)
+            .attr("y2", y);  
         }
         
     }
 
     function dragend(d){
         
-        var bisectDate = d3.bisector(function(d) { 
-            return d.DateTime; 
-        }).left;
+        // var bisectDate = d3.bisector(function(d) { 
+        //     return d.DateTime; 
+        // }).left;
         
         // var bisectMag = d3.bisector(function(d) { 
         //     return d.Magnitude; 
         // }).left;        
 
         function getDateByX(x){
-            var x0 = xScale.invert(x),
-                i = bisectDate(data, x0, 1),
-                d0 = data[i - 1],
-                d1 = data[i],
-                d = x0 - d0.DateTime > d1.DateTime - x0 ? d1 : d0;
-            return d.DateTime;
+            // var x0 = xScale.invert(x),
+            //     i = bisectDate(data, x0, 1),
+            //     d0 = data[i - 1],
+            //     d1 = data[i],
+            //     d = x0 - d0.DateTime > d1.DateTime - x0 ? d1 : d0;
+                
+            // return d.DateTime;
+            return xScale.invert(x);
+            
         }
         
         function getMagByY(y){
-            var y0 = yScale.invert(y);
-            return y0;
+            return yScale.invert(y);
         }        
 
         var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
@@ -156,10 +193,11 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         d3.selectAll(".circle").each(function(d){
             // 
             if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
-                d3.select(this).style("fill", "#00A8E8");
+                // d3.select(this).style("fill", "#00A8E8");
+                d3.select(this).style("opacity", .8);
                 locations.push([d.Longitude, d.Latitude])                
             } else {
-                d3.select(this).style("fill", "#9C9C9C");
+                d3.select(this).style("opacity", .3);
             }
         }); 
         addBlastSites(locations);       
@@ -190,5 +228,53 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             .style("cursor", d.cursor)
             .call(drag);    
     });
+    
+    showCircleWithinCurrentExtent = function(config){
+        var lonExtent = [config.coordMin[0], config.coordMax[0]];
+        var latExtent = [config.coordMin[1], config.coordMax[1]];
+        
+        console.log(lonExtent);
+        
+        var lonMin = d3.min(lonExtent);
+        var lonMax = d3.max(lonExtent);
+        
+        if((lonMin < 0 && lonMax < 0) || (lonMin > 0 && lonMax >0)){
+            d3.selectAll(".circle").each(function(d){
+                //
+                if((+d.Longitude >= d3.min(lonExtent) && +d.Longitude <= d3.max(lonExtent)) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
+                    d3.select(this).attr("display", null);             
+                } else {
+                    d3.select(this).attr("display", "none");  
+                }
+            }); 
+        }
+        
+        if(lonMin < 0 && lonMax > 0){
+            console.log('cross international dateline');
+            d3.selectAll(".circle").each(function(d){
+                //
+                if( ( ( +d.Longitude > -180 && +d.Longitude <= lonMin ) || ( +d.Longitude >= lonMax && +d.Longitude < 180) ) && 
+                    ( +d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))
+                ){
+                    d3.select(this).attr("display", null);             
+                } else {
+                    d3.select(this).attr("display", "none");  
+                }
+            }); 
+        }
+        
+        // d3.selectAll(".circle").each(function(d){
+        //     //
+        //     if((+d.Longitude >= d3.min(lonExtent) && +d.Longitude <= d3.max(lonExtent)) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
+        //         d3.select(this).attr("display", null);             
+        //     } else {
+        //         d3.select(this).attr("display", "none");  
+        //     }
+        // }); 
+    }
+    
+   showAllCircles = function(){
+       d3.selectAll(".circle").attr("display", null);  
+   }
 
 });

@@ -5,12 +5,17 @@ require(["esri/map",
 "esri/layers/GraphicsLayer",
 "esri/geometry/Point",
 "esri/symbols/SimpleMarkerSymbol",
+"esri/geometry/webMercatorUtils",
 "esri/Color",
 "dojo/domReady!"], 
-function(Map, Graphic, GraphicsLayer, Point, SimpleMarkerSymbol, Color) {
+function(
+    Map, Graphic, GraphicsLayer, 
+    Point, SimpleMarkerSymbol, 
+    webMercatorUtils, Color
+) {
     
     map = new Map("mapDiv", {
-        center: [180, 45],
+        center: [0, 45],
         zoom: 3,
         basemap: "dark-gray"
     });
@@ -62,5 +67,28 @@ function(Map, Graphic, GraphicsLayer, Point, SimpleMarkerSymbol, Color) {
     zoomToBlastSite = function(location){
         map.centerAt(new Point(location[0], location[1]));
     }
+    
+    map.on("extent-change", changeHandler);
+
+    function changeHandler(evt){
+        var extent = evt.extent;
+        var lod = evt.lod.level;
+
+        coordMin = webMercatorUtils.xyToLngLat(extent.xmin, extent.ymin);
+        coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);
+        
+        // console.log(evt);
+        
+        if(lod >= 5){
+            showCircleWithinCurrentExtent({
+                coordMin: coordMin,
+                coordMax: coordMax
+            });
+        } else {
+            showAllCircles();
+        }
+
+    }    
+    
   
 });
