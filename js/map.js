@@ -73,6 +73,8 @@ function(
     function changeHandler(evt){
         var extent = evt.extent;
         var lod = evt.lod.level;
+        
+        console.log(evt);
 
         coordMin = webMercatorUtils.xyToLngLat(extent.xmin, extent.ymin);
         coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);

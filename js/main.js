@@ -87,23 +87,23 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         })
         .style("fill", function(d) {
             var mag = d.Magnitude;
-            // var color;
-            // switch (true) {
-            //     case (mag < 2):
-            //         color = '#FFFFFF';
-            //         break;
-            //     case (mag >= 2 && mag < 4):
-            //         color = '#FFFF00';
-            //         break;
-            //     case (mag >= 4 && mag < 6):
-            //         color = '#FF5300';
-            //         break;
-            //     case (mag >= 6):
-            //         color = '#B5004D';
-            //         break;
-            // }
-            // return color;
-            return colorScale(+d.Magnitude);
+            var color;
+            switch (true) {
+                case (mag < 2):
+                    color = '#FFFFFF';
+                    break;
+                case (mag >= 2 && mag < 4):
+                    color = '#FFFF00';
+                    break;
+                case (mag >= 4 && mag < 6):
+                    color = '#FF5300';
+                    break;
+                case (mag >= 6):
+                    color = '#B5004D';
+                    break;
+            }
+            return color;
+            // return colorScale(+d.Magnitude);
         })
         .style("opacity", function(d) {
             return 0.3;
@@ -195,7 +195,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
                 // d3.select(this).style("fill", "#00A8E8");
                 d3.select(this).style("opacity", .8);
-                locations.push([d.Longitude, d.Latitude])                
+                locations.push([d.Longitude, d.Latitude, d.Magnitude])                
             } else {
                 d3.select(this).style("opacity", .3);
             }
@@ -221,8 +221,8 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             })
             // .style("display", "none")
             .attr('stroke-width', '2')
-            .style('opacity', 0.5)
-            .attr("stroke", "#00171F")
+            .style('opacity', 0.3)
+            .attr("stroke", "#00ffff")
             .attr('class', d.class)
             .attr('id', d.class + i % 2)
             .style("cursor", d.cursor)

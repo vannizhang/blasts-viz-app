@@ -9,9 +9,13 @@ path {
 .axis path,
 .axis line {
     fill: none;
-    stroke: #b4b4b4;
+    stroke: #333333;
     stroke-width: 1;
     shape-rendering: crispEdges;
+}
+
+.axis text {
+    fill: #666666;
 }
 
 #mapDiv {
@@ -28,5 +32,5 @@ path {
     position: absolute;
     width: 100%;
     height: 40%;
-    background-color: #efefef
+    background-color: #232227
 }
