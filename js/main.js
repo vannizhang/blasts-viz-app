@@ -5,8 +5,8 @@ var docHeight = $(document).height();
 var showCircleWithinCurrentExtent;
 
 // Set the dimensions of the canvas / graph
-var margin = {top: 20, right: 20, bottom: 20, left: 40},
-    width = docWidth  - margin.left - margin.right - 40,
+var margin = {top: 20, right: 10, bottom: 20, left: 70},
+    width = docWidth  - margin.left - margin.right,
     height = docHeight * 0.4 - margin.top - margin.bottom;
     
 // Adds the svg canvas
@@ -41,6 +41,7 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
     .scale(yScale)
     .orient("left")
+    // .tickValues(yScale.domain())    
     .ticks(10)
     .tickPadding(12)
     .innerTickSize(-(width - margin.left - margin.right));
@@ -106,7 +107,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             return colorScale(+d.Magnitude);
         })
         .style("opacity", function(d) {
-            return 0.3;
+            return 0.2;
         })
         .on('click', function(d){
             // console.log(d);
@@ -197,7 +198,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
                 d3.select(this).style("opacity", .8);
                 locations.push([d.Longitude, d.Latitude, d.Magnitude])                
             } else {
-                d3.select(this).style("opacity", .3);
+                d3.select(this).style("opacity", .2);
             }
         }); 
         addBlastSites(locations);       
