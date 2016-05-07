@@ -19,7 +19,8 @@ function(
     map = new Map("mapDiv", {
         center: [0, 50],
         zoom: 3,
-        basemap: "dark-gray"
+        basemap: "dark-gray",
+        showAttribution: false
     });
 
     var blastLayer = new GraphicsLayer({

@@ -5,7 +5,7 @@ var docHeight = $(document).height();
 var showCircleWithinCurrentExtent;
 
 // Set the dimensions of the canvas / graph
-var margin = {top: 20, right: 0, bottom: 20, left: 60},
+var margin = {top: 30, right: 0, bottom: 10, left: 50},
     width = docWidth  - margin.left - margin.right,
     height = docHeight * 0.39 - margin.top - margin.bottom;
     
@@ -46,6 +46,8 @@ var yAxis = d3.svg.axis()
     .tickPadding(12)
     .innerTickSize(-(width - margin.left - margin.right));
     
+console.log(yScale.domain());
+    
 // Add the X Axis
 svg.append("g")
     .attr("class", "x axis")
@@ -56,6 +58,20 @@ svg.append("g")
 svg.append("g")
     .attr("class", "y axis")
     .call(yAxis);    
+    
+svg.append("svg:image")
+   .attr('x', -35)
+   .attr('y', function(d) {return yScale(1.5);})
+   .attr('width', 30)
+   .attr('height', 30)
+   .attr("xlink:href","./img/less.png")
+   
+svg.append("svg:image")
+   .attr('x', -35)
+   .attr('y', function(d) {return yScale(8);})
+   .attr('width', 30)
+   .attr('height', 30)
+   .attr("xlink:href","./img/more.png")   
     
 var radiusScale = d3.scale.linear()
     .domain([0, 10])

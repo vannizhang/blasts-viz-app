@@ -14,12 +14,12 @@ path {
     shape-rendering: crispEdges;
 }
 
-.axis text {
+.x.axis text {
     fill: #666666;
 }
 
-.y text {
-    /*display: none;*/
+.y.axis text {
+    display: none;
 }
 
 #mapDiv {
