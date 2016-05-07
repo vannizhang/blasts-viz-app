@@ -214,7 +214,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
                 // d3.select(this).style("fill", "#00A8E8");
                 d3.select(this).style("opacity", .8);
-                locations.push([d.Longitude, d.Latitude, d.Magnitude])                
+                locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0)])                
             } else {
                 d3.select(this).style("opacity", .2);
             }
