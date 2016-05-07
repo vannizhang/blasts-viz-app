@@ -5,9 +5,9 @@ var docHeight = $(document).height();
 var showCircleWithinCurrentExtent;
 
 // Set the dimensions of the canvas / graph
-var margin = {top: 20, right: 10, bottom: 20, left: 70},
+var margin = {top: 20, right: 0, bottom: 20, left: 60},
     width = docWidth  - margin.left - margin.right,
-    height = docHeight * 0.4 - margin.top - margin.bottom;
+    height = docHeight * 0.39 - margin.top - margin.bottom;
     
 // Adds the svg canvas
 var svg = d3.select("#chartDiv")
@@ -127,6 +127,14 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             map.getLayer('blastHighlightLayer').clear(); 
         }); 
 
+    function getDateByX(x){
+        return xScale.invert(x);
+    }
+    
+    function getMagByY(y){
+        return yScale.invert(y);
+    }   
+        
     var drag = d3.behavior.drag()
         .on("drag", dragmove)
         .on("dragend", dragend);
@@ -155,6 +163,29 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             .attr("y2", y);  
         }
         
+        
+        var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
+        var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
+        var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
+        var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
+        
+        var format = d3.time.format("%Y");
+
+        var yearText = format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent));
+        var magText = 'magnitude ' + d3.min(magExtent).toFixed(1)+ ' - ' + d3.max(magExtent).toFixed(1);
+        
+        if($('#yearDiv').text() !== yearText){
+            $('#yearDiv').text(yearText); 
+        }
+        
+        if(!$("#magDiv").width()) {
+            console.log($("#yearDiv").width());
+            $("#magDiv").css('width', $("#yearDiv").width()); 
+        }
+        
+        if($('#magDiv').text() !== magText){
+            $('#magDiv').text(magText); 
+        }        
     }
 
     function dragend(d){
@@ -165,30 +196,17 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         
         // var bisectMag = d3.bisector(function(d) { 
         //     return d.Magnitude; 
-        // }).left;        
-
-        function getDateByX(x){
-            // var x0 = xScale.invert(x),
-            //     i = bisectDate(data, x0, 1),
-            //     d0 = data[i - 1],
-            //     d1 = data[i],
-            //     d = x0 - d0.DateTime > d1.DateTime - x0 ? d1 : d0;
-                
-            // return d.DateTime;
-            return xScale.invert(x);
-            
-        }
-        
-        function getMagByY(y){
-            return yScale.invert(y);
-        }        
+        // }).left;             
 
         var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
         var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
             
         var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
         var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
-        // console.log(d3.min(magExtent), d3.max(magExtent));
+        
+        // var format = d3.time.format("%Y");
+        // $('#yearDiv').text(format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent)));
+        // console.log(format(d3.min(timeExtent)), format(d3.max(timeExtent)));
         
         var locations = [];
         d3.selectAll(".circle").each(function(d){

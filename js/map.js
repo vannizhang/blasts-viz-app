@@ -15,7 +15,7 @@ function(
 ) {
     
     map = new Map("mapDiv", {
-        center: [0, 45],
+        center: [0, 50],
         zoom: 3,
         basemap: "dark-gray"
     });

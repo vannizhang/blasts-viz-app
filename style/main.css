@@ -38,3 +38,37 @@ path {
     height: 40%;
     background-color: #232227
 }
+
+#billboard {
+    position: absolute;
+    top: 0px;
+    margin: 5px auto;
+    left: 0px;
+    right:0px;
+    z-index: 999;
+    color: #FFF;
+    opacity: 0.5;
+    text-align: center;
+    display: block;
+}
+
+#yearDiv {
+    display: inline-block;
+    text-align: center;
+    font-size: 65px;
+    margin-top: 20px;
+    /*background: rgba(240, 240, 240, .9)*/
+}
+
+#magDiv {
+    /*display: inline-block;*/
+    /*max-width: 700px;*/
+    width: 0px;
+    text-align: right;
+    font-size: 28px;
+    /*margin-top: 20px;*/
+    left: 0px;
+    right:0px;
+    margin: 5px auto;    
+    /*background: rgba(240, 240, 240, .9)*/
+}
