@@ -1,4 +1,7 @@
-body { font: 12px Arial;}
+body { 
+    font-size: 12px;
+    font-family: 'Roboto', sans-serif;
+}
 
 path { 
     stroke: steelblue;
@@ -9,7 +12,7 @@ path {
 .axis path,
 .axis line {
     fill: none;
-    stroke: #333333;
+    stroke: #2d2d2d;
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
@@ -50,14 +53,21 @@ path {
     opacity: 0.5;
     text-align: center;
     display: block;
+    /*background: rgba(240, 240, 240, .9);*/
+    max-width: 400px;
 }
 
 #yearDiv {
     display: inline-block;
     text-align: center;
-    font-size: 65px;
+    /*font-size: 65px;*/
     margin-top: 20px;
-    /*background: rgba(240, 240, 240, .9)*/
+    
+    font-size: 64px; 
+    font-weight: 100; 
+    text-shadow: 0px 0px 8px rgba(0, 0, 0, 1); 
+    letter-spacing: -3; 
+    color: rgba(255, 255, 255, 0.20)
 }
 
 #magDiv {
@@ -65,10 +75,13 @@ path {
     /*max-width: 700px;*/
     width: 0px;
     text-align: right;
-    font-size: 28px;
     /*margin-top: 20px;*/
     left: 0px;
     right:0px;
     margin: 5px auto;    
     /*background: rgba(240, 240, 240, .9)*/
+    
+    font-size: 20px; 
+    text-shadow: 0px 0px 8px rgba(0, 0, 0, 1); 
+    color: rgba(255, 255, 255, 0.20)
 }

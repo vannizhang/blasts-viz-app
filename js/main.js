@@ -34,17 +34,21 @@ var yScale = d3.scale.linear()
 var xAxis = d3.svg.axis()
     .scale(xScale)
     .orient("bottom")
-    .ticks(20)
+    .ticks(60)
     .tickPadding(12)
-    .innerTickSize(-(height - margin.top));;
+    .tickFormat(function(d){
+        var year = d3.time.format('%Y')(new Date(d));
+        return year.slice(-2);
+    })
+    .innerTickSize(-(height - margin.top));
 
 var yAxis = d3.svg.axis()
     .scale(yScale)
     .orient("left")
     // .tickValues(yScale.domain())    
     .ticks(10)
-    .tickPadding(12)
-    .innerTickSize(-(width - margin.left - margin.right));
+    .tickPadding(12);
+    // .innerTickSize(-(width - margin.left - margin.right));
     
 console.log(yScale.domain());
     
@@ -103,23 +107,6 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             return 2;
         })
         .style("fill", function(d) {
-            // var mag = d.Magnitude;
-            // var color;
-            // switch (true) {
-            //     case (mag < 2):
-            //         color = '#FFFFFF';
-            //         break;
-            //     case (mag >= 2 && mag < 4):
-            //         color = '#FFFF00';
-            //         break;
-            //     case (mag >= 4 && mag < 6):
-            //         color = '#FF5300';
-            //         break;
-            //     case (mag >= 6):
-            //         color = '#B5004D';
-            //         break;
-            // }
-            // return color;
             return colorScale(+d.Magnitude);
         })
         .style("opacity", function(d) {

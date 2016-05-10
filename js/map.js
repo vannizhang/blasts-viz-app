@@ -3,26 +3,23 @@ var map, addBlastSites, addBlastHighlightSites, zoomToBlastSite;
 require(["esri/map", 
 "esri/graphic",
 "esri/layers/GraphicsLayer",
+"esri/layers/ArcGISTiledMapServiceLayer",
 "esri/geometry/Point",
 "esri/renderers/ClassBreaksRenderer",
 "esri/symbols/SimpleMarkerSymbol",
 "esri/symbols/SimpleLineSymbol",
 "esri/geometry/webMercatorUtils",
 "esri/Color",
+"esri/layers/VectorTileLayer",
 "dojo/domReady!"], 
 function(
-    Map, Graphic, GraphicsLayer, 
+    Map, Graphic, GraphicsLayer, ArcGISTiledMapServiceLayer,
     Point, ClassBreaksRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
-    webMercatorUtils, Color
+    webMercatorUtils, Color, VectorTileLayer
 ) {
     
-    map = new Map("mapDiv", {
-        center: [0, 50],
-        zoom: 3,
-        basemap: "dark-gray",
-        showAttribution: false
-    });
-
+    var vtlayer = new VectorTileLayer("https://www.arcgis.com/sharing/rest/content/items/b187ae2ee9884d90a1fb09e95ceb003d/resources/styles/root.json");
+    
     var blastLayer = new GraphicsLayer({
         id: 'blastLayer',
         opacity: 0.8
@@ -33,14 +30,32 @@ function(
         opacity: 0.8
     });    
     
+    var satelliteLayer = new ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer", {
+        visible: false
+    });      
+    
+    var referenceLayer = new ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer", {
+        visible: false
+    });        
+    
+    map = new Map("mapDiv", {
+        center: [0, 50],
+        zoom: 2,
+        // basemap: "satellite",
+        showAttribution: false
+    });
+
+    map.addLayer(vtlayer);
+    map.addLayer(satelliteLayer);
+    map.addLayer(referenceLayer);
     map.addLayer(blastLayer);
     map.addLayer(blastHighlightLayer);
     
     var rd = new ClassBreaksRenderer(new SimpleMarkerSymbol(), "mag");
-    rd.addBreak(6, 8, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([100,100,100,0])),new Color([255, 255, 255, 0.4])));
-    rd.addBreak(4, 6, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([100,100,100,0])),new Color([255, 255, 0, 0.4])));
-    rd.addBreak(2, 4, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([100,100,100,0])),new Color([255, 83, 0, 0.4])));
-    rd.addBreak(0, 2, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([100,100,100,0])),new Color([181, 0, 77, 0.4])));
+    rd.addBreak(6, 8, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 255, 0])),new Color([255, 255, 255, 0.9])));
+    rd.addBreak(4, 6, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 0, 0])),new Color([255, 255, 0, 0.8])));
+    rd.addBreak(2, 4, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 83, 0, 0])),new Color([255, 83, 0, 0.7])));
+    rd.addBreak(0, 2, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([181, 0, 77, 0])),new Color([181, 0, 77, 0.6])));
     
     blastLayer.renderer = rd;
 
@@ -94,6 +109,16 @@ function(
             });
         } else {
             showAllCircles();
+        }
+        
+        if(lod >= 11){
+            vtlayer.hide();
+            referenceLayer.show();
+            satelliteLayer.show();
+        } else {
+            vtlayer.show();
+            referenceLayer.hide();
+            satelliteLayer.hide();
         }
 
     }    
