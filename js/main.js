@@ -2,7 +2,7 @@ var startDate = new Date(1960, 1, 1);
 var endDate = new Date(2016, 4, 30);
 var docWidth = $(document).width();
 var docHeight = $(document).height();
-var showCircleWithinCurrentExtent;
+var showCircleWithinCurrentExtent, showAllCircles;
 
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 0, bottom: 10, left: 50},
@@ -12,6 +12,7 @@ var margin = {top: 30, right: 0, bottom: 10, left: 50},
 // Adds the svg canvas
 var svg = d3.select("#chartDiv")
     .append("svg")
+        .attr('class', 'svg-container')
         .attr("width", width + margin.left + margin.right)
         .attr("height", height + margin.top + margin.bottom)
     .append("g")
@@ -49,9 +50,7 @@ var yAxis = d3.svg.axis()
     .ticks(10)
     .tickPadding(12);
     // .innerTickSize(-(width - margin.left - margin.right));
-    
-console.log(yScale.domain());
-    
+
 // Add the X Axis
 svg.append("g")
     .attr("class", "x axis")
@@ -94,7 +93,9 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         d.Magnitude = +d.Magnitude;
     });
     
-    // console.log(data);
+    // console.log(data[0]);
+    // addAllBlastSites({Longitude: 0, Latitude:0, Magnitude: 0});  
+    
     
     svg.selectAll("circle")
         .data(data).enter()
@@ -244,7 +245,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             // .style("display", "none")
             .attr('stroke-width', '2')
             .style('opacity', 0.3)
-            .attr("stroke", "#00ffff")
+            .attr("stroke", "#58C7B6")
             .attr('class', d.class)
             .attr('id', d.class + i % 2)
             .style("cursor", d.cursor)
@@ -260,7 +261,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         var lonMin = d3.min(lonExtent);
         var lonMax = d3.max(lonExtent);
         
-        if((lonMin < 0 && lonMax < 0) || (lonMin > 0 && lonMax >0)){
+        if((lonMin < 0 && lonMax < 0) || (lonMin > 0 && lonMax >0) || (lonMin > -90) && (lonMax < 90)){
             d3.selectAll(".circle").each(function(d){
                 //
                 if((+d.Longitude >= d3.min(lonExtent) && +d.Longitude <= d3.max(lonExtent)) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
@@ -271,7 +272,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             }); 
         }
         
-        if(lonMin < 0 && lonMax > 0){
+        if((lonMin < -90) && (lonMax > 90)){
             console.log('cross international dateline');
             d3.selectAll(".circle").each(function(d){
                 //

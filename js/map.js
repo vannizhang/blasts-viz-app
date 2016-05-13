@@ -1,4 +1,10 @@
-var map, addBlastSites, addBlastHighlightSites, zoomToBlastSite;
+var map, addBlastSites, addAllBlastSites, foo, addBlastHighlightSites, zoomToBlastSite;
+
+var startDate = new Date(1960, 1, 1);
+var endDate = new Date(2016, 4, 30);
+var docWidth = $(document).width();
+var docHeight = $(document).height();
+var showCircleWithinCurrentExtent, showAllCircles;
 
 require(["esri/map", 
 "esri/graphic",
@@ -25,6 +31,11 @@ function(
         opacity: 0.8
     });
     
+    // var allBlastLayer = new GraphicsLayer({
+    //     id: 'allBlastLayer',
+    //     opacity: 0.8
+    // });    
+    
     var blastHighlightLayer = new GraphicsLayer({
         id: 'blastHighlightLayer',
         opacity: 0.8
@@ -49,6 +60,7 @@ function(
     map.addLayer(satelliteLayer);
     map.addLayer(referenceLayer);
     map.addLayer(blastLayer);
+    // map.addLayer(allBlastLayer);
     map.addLayer(blastHighlightLayer);
     
     var rd = new ClassBreaksRenderer(new SimpleMarkerSymbol(), "mag");
@@ -58,6 +70,7 @@ function(
     rd.addBreak(0, 2, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([181, 0, 77, 0])),new Color([181, 0, 77, 0.6])));
     
     blastLayer.renderer = rd;
+    // allBlastLayer.renderer = rd;
 
     addBlastSites = function(locations){
         map.getLayer('blastLayer').clear(); 
@@ -70,6 +83,18 @@ function(
         
         console.log(blastLayer);
     }
+    
+    // addAllBlastSites = function(locations){
+    //     // map.getLayer('blastLayer').clear(); 
+    //     // map.getLayer('blastHighlightLayer').clear();   
+
+    //     locations.forEach(function(d){        
+    //         var graphic = new Graphic(new Point(d.Longitude, d.Latitude), null, {mag: +d.Magnitude});    
+    //         map.getLayer('allBlastLayer').add(graphic);          
+    //     });
+        
+    //     // console.log(blastLayer);
+    // }    
 
     addBlastHighlightSites = function(location, hightlight){
         map.getLayer('blastHighlightLayer').clear();  
@@ -100,8 +125,6 @@ function(
         coordMin = webMercatorUtils.xyToLngLat(extent.xmin, extent.ymin);
         coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);
         
-        // console.log(evt);
-        
         if(lod >= 5){
             showCircleWithinCurrentExtent({
                 coordMin: coordMin,
@@ -121,7 +144,6 @@ function(
             satelliteLayer.hide();
         }
 
-    }    
+    } 
     
-  
 });

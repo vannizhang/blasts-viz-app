@@ -4,22 +4,41 @@
     <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
     <title>Blast Map</title>
     <link rel="stylesheet" href="https://js.arcgis.com/3.16/esri/css/esri.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="./style/main.css">  
 </head>
 <body>
-    <div id= 'billboard'>
+    <div id='billboard'>
         <div id="yearDiv"></div>
         <div id="magDiv"></div>
     </div>
-    <div id= 'chartDiv'></div>
-    <div id= 'mapDiv'></div>    
+    <div id='sidebar'>
+    </div>
+    <div id='chartDiv'>
+        <div id="divider"></div>
+    </div>
+    <div id='mapContainer'>
+        <div id='mapDiv'>
+            <div id="navbar">
+                <div class='navbar-item'>
+                    <i class="fa fa-share-alt fa-3x" aria-hidden="true"></i>
+                </div>
+                <div class='navbar-item'>
+                    <i class="fa fa-bars fa-3x meun-icon" aria-hidden="true"></i>
+                </div>
+            </div>        
+        </div>    
+    </div>
+
     
     <!-- load the libraries -->    
     <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="https://use.fontawesome.com/b0c24a8cf8.js"></script>
     <script src="https://js.arcgis.com/3.16/"></script>
     <script src="./js/map.js"></script>
     <script src="./js/main.js"></script>
+    <script src="./js/ui.js"></script>
 
     <script>
 

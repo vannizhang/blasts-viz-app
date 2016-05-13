@@ -1,6 +1,7 @@
 body { 
     font-size: 12px;
     font-family: 'Roboto', sans-serif;
+    background: #111;
 }
 
 path { 
@@ -12,13 +13,13 @@ path {
 .axis path,
 .axis line {
     fill: none;
-    stroke: #2d2d2d;
+    stroke: #222828;
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
 
 .x.axis text {
-    fill: #666666;
+    fill: #58C7B6;
 }
 
 .y.axis text {
@@ -31,6 +32,7 @@ path {
     position: absolute;
     width: 100%;
     height: 60%;
+    transition: margin-right .5s;
 }
 
 #chartDiv {
@@ -39,7 +41,37 @@ path {
     position: absolute;
     width: 100%;
     height: 40%;
-    background-color: #232227
+    background-color: #202222
+}
+
+#navbar {
+    top: 20px;
+    right: 0px;
+    position: absolute;
+    z-index: 99;
+}
+
+.navbar-item {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    margin-right: 25px;
+    
+    line-height: 30px;
+    text-align: center;
+    vertical-align: middle; 
+    cursor: pointer;
+}
+
+#sidebar {
+    top: 0;
+    right: 0;
+    position: absolute;
+    width: 0px;
+    height: 60%;
+    z-index: 99;
+    background-color: #111;
+    transition: 0.5s;
 }
 
 #billboard {
@@ -65,9 +97,9 @@ path {
     
     font-size: 64px; 
     font-weight: 100; 
-    text-shadow: 0px 0px 8px rgba(0, 0, 0, 1); 
+    text-shadow: 0px 0px 8px rgba(88, 199, 182, 1);
     letter-spacing: -3; 
-    color: rgba(255, 255, 255, 0.20)
+    color: rgba(88, 199, 182, 0.20);
 }
 
 #magDiv {
@@ -78,10 +110,40 @@ path {
     /*margin-top: 20px;*/
     left: 0px;
     right:0px;
-    margin: 5px auto;    
+    margin: 0px auto; 
     /*background: rgba(240, 240, 240, .9)*/
     
     font-size: 20px; 
-    text-shadow: 0px 0px 8px rgba(0, 0, 0, 1); 
-    color: rgba(255, 255, 255, 0.20)
+    font-weight: 300;
+    text-shadow: 0px 0px 8px rgba(88, 199, 182, 0.5);
+    color: rgba(88, 199, 182, 0.20)
 }
+
+#divider {
+    width: 100%;
+    height: 10px;
+    position: absolute;
+    /*background-color: #eee;*/
+    top: -10px;
+    z-index: 99;
+
+    background: #202222; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(rgba(88,199,182,0), rgba(88,199,182,1)); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(rgba(88,199,182,0), rgba(88,199,182,1)); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(rgba(88,199,182,0), rgba(88,199,182,1)); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(rgba(88,199,182,0), rgba(88,199,182,1)); /* Standard syntax (must be last) */
+}
+
+.fa {
+    color: rgba(88, 199, 182, 1);
+    line-height: inherit;
+}
+
+/*.fa-share-alt {
+    color: rgba(88, 199, 182, 1);
+    line-height: inherit;
+}
+
+.fa-bars {
+
+}*/
