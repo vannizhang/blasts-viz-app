@@ -19,6 +19,7 @@ $(document).ready(function(){
         $('#mapDiv').css("width", mapDivWidth);
         
         $('.meun-icon').toggleClass('active');
+        $('#sidebar').toggleClass('hide');
     }
     
     $('.meun-icon').on('click', function(){

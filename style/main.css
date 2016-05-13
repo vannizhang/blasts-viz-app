@@ -72,6 +72,15 @@ path {
     z-index: 99;
     background-color: #111;
     transition: 0.5s;
+    color: #eee;
+}
+
+#sidebar.hide {
+    display: none;
+}
+
+#foo {
+    margin: 10px 20px;
 }
 
 #billboard {
