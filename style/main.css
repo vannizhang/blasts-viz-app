@@ -156,3 +156,47 @@ path {
 .fa-bars {
 
 }*/
+
+.esriPopup .contentPane {
+    background-color: #202222;
+    color: rgba(88,199,182,1);
+    max-width: 200px;
+    line-height: 16px;
+    opacity: 0.7;
+}
+
+.esriPopup .esriPopupWrapper {
+    box-shadow: none;
+}
+
+.esriPopup .actionsPane {
+    display: none;
+}
+
+.esriPopup .titlePane {
+    display: none;
+}
+
+/*.esriPopup .pointer  {
+    display: none;
+}
+
+.esriPopup .outerPointer  {
+    display: none;
+}*/
+
+.esriPopup .outerPointer.left  {
+    display: none;
+}
+
+.esriPopup .outerPointer.right  {
+    display: none;
+}
+
+.esriPopup .pointer.bottom {
+    display: none;
+}
+
+.esriPopup .pointer.top {
+    display: none;
+}

@@ -121,7 +121,11 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             d3.select(this)
                 .attr("r", 5)
                 .style("opacity", 1);
-            addBlastHighlightSites([d.Longitude, d.Latitude]);
+                
+            if($('#yearDiv').text()){
+                addBlastHighlightSites([d.Longitude, d.Latitude, d.DateTime, d.Magnitude]);
+            }
+            
         })
         .on('mouseout', function(d){
             d3.select(this)
@@ -129,6 +133,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
                 .style("opacity", 0.5);
             
             map.getLayer('blastHighlightLayer').clear(); 
+            map.infoWindow.hide();
         }); 
 
     function getDateByX(x){

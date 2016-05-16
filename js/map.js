@@ -43,7 +43,8 @@ function(
     
     var satelliteLayer = new ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer", {
         visible: false
-    });      
+    });  
+    satelliteLayer.opacity = 0.3;    
     
     var referenceLayer = new ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer", {
         visible: false
@@ -55,6 +56,7 @@ function(
         // basemap: "satellite",
         showAttribution: false
     });
+
 
     map.addLayer(vtlayer);
     map.addLayer(satelliteLayer);
@@ -98,16 +100,29 @@ function(
 
     addBlastHighlightSites = function(location, hightlight){
         map.getLayer('blastHighlightLayer').clear();  
-         
+        
+        var blastLocation = new Point(location[0], location[1]);
         var symbol = new SimpleMarkerSymbol(
           SimpleMarkerSymbol.STYLE_CIRCLE, 
           8, 
           null,
           new Color([255, 0, 0, 1])
-        );           
+        );     
         
-        var graphic = new Graphic(new Point(location[0], location[1]), symbol);    
+        var attributes = {
+            datetime: location[2],
+            magnitude: location[3]
+        };
+        
+        var infoTemplateContent = '<b>Date: </b>' + getSimplifiedDate(attributes.datetime) + '<br>';
+        infoTemplateContent +=  '<b>Magnitude: </b>' + attributes.magnitude + '<br>';     
+        
+        var graphic = new Graphic(blastLocation, symbol);    
         map.getLayer('blastHighlightLayer').add(graphic);  
+        
+        // map.infoWindow.setTitle('<b>Blast Information</b>');
+        map.infoWindow.setContent(infoTemplateContent);
+        map.infoWindow.show(blastLocation, map.getInfoWindowAnchor(blastLocation));
     }    
     
     zoomToBlastSite = function(location){
@@ -135,15 +150,34 @@ function(
         }
         
         if(lod >= 11){
-            vtlayer.hide();
+            // vtlayer.hide();
+            vtlayer.opacity = .5;
             referenceLayer.show();
             satelliteLayer.show();
         } else {
-            vtlayer.show();
+            // vtlayer.show();
+            vtlayer.opacity = 1;
             referenceLayer.hide();
             satelliteLayer.hide();
         }
 
     } 
+    
+    function getSimplifiedDate(t){
+
+        var monthNames = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+        ];
+
+        var date = new Date(t);
+        var day = date.getDate();
+        var monthIndex = date.getMonth();
+        var year = date.getFullYear();
+
+        return monthNames[monthIndex] + '-' + day + '-' + year;
+    }
     
 });
