@@ -1,4 +1,4 @@
-var map, addBlastSites, addAllBlastSites, foo, addBlastHighlightSites, zoomToBlastSite;
+var map, addBlastSites, addAllBlastSites, addBlastHighlightSites, zoomToBlastSite, mapViewData;
 
 var startDate = new Date(1960, 1, 1);
 var endDate = new Date(2016, 4, 30);
@@ -83,7 +83,7 @@ function(
             map.getLayer('blastLayer').add(graphic);          
         });
         
-        console.log(blastLayer);
+        // console.log(blastLayer);
     }
     
     // addAllBlastSites = function(locations){
@@ -114,8 +114,8 @@ function(
             magnitude: location[3]
         };
         
-        var infoTemplateContent = '<b>Date: </b>' + getSimplifiedDate(attributes.datetime) + '<br>';
-        infoTemplateContent +=  '<b>Magnitude: </b>' + attributes.magnitude + '<br>';     
+        var infoTemplateContent = getSimplifiedDate(attributes.datetime) + '<br>';
+        infoTemplateContent +=  'magnitude ' + attributes.magnitude + '<br>';     
         
         var graphic = new Graphic(blastLocation, symbol);    
         map.getLayer('blastHighlightLayer').add(graphic);  
@@ -130,13 +130,26 @@ function(
     }
     
     map.on("extent-change", changeHandler);
+    
+    map.on("load", function(){
+        if(window.location.hash){
+            console.log(window.location.hash); 
+        }
+    })
 
     function changeHandler(evt){
         var extent = evt.extent;
         var lod = evt.lod.level;
+        var mapCenter = evt.extent.getCenter();
+        mapViewData = webMercatorUtils.xyToLngLat(mapCenter.x, mapCenter.y);
+        mapViewData.push(lod);
+        mapViewData[0] = mapViewData[0].toFixed(2);
+        mapViewData[1] = mapViewData[1].toFixed(2);
         
-        // console.log(evt);
-
+        if(queryParams){
+            updateHash(queryParams, mapViewData);
+        }
+        
         coordMin = webMercatorUtils.xyToLngLat(extent.xmin, extent.ymin);
         coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);
         

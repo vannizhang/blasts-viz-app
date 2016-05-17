@@ -3,6 +3,7 @@ var endDate = new Date(2016, 4, 30);
 var docWidth = $(document).width();
 var docHeight = $(document).height();
 var showCircleWithinCurrentExtent, showAllCircles;
+var queryParams;
 
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 0, bottom: 10, left: 50},
@@ -194,19 +195,42 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         
         if($('#magDiv').text() !== magText){
             $('#magDiv').text(magText); 
-        }        
+        }
+        
+        queryParams = [new Date(d3.min(timeExtent)).getFullYear(), new Date(d3.max(timeExtent)).getFullYear(), d3.min(magExtent).toFixed(1), d3.max(magExtent).toFixed(1)];
+        updateHash(queryParams, mapViewData);         
     }
 
     function dragend(d){
         
-        // var bisectDate = d3.bisector(function(d) { 
-        //     return d.DateTime; 
-        // }).left;
-        
-        // var bisectMag = d3.bisector(function(d) { 
-        //     return d.Magnitude; 
-        // }).left;             
+        queryPointsByXYRanges();        
 
+        // var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
+        // var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
+            
+        // var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
+        // var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
+        
+        // // var format = d3.time.format("%Y");
+        // // $('#yearDiv').text(format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent)));
+        // // console.log(format(d3.min(timeExtent)), format(d3.max(timeExtent)));
+        
+        // var locations = [];
+        // d3.selectAll(".circle").each(function(d){
+        //     // 
+        //     if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
+        //         // d3.select(this).style("fill", "#00A8E8");
+        //         d3.select(this).style("opacity", .8);
+        //         locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0)])                
+        //     } else {
+        //         d3.select(this).style("opacity", .2);
+        //     }
+        // }); 
+        // addBlastSites(locations);       
+    }
+    
+    function queryPointsByXYRanges(){
+        
         var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
         var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
             
@@ -228,14 +252,15 @@ d3.csv("./data/blast-data.csv", function(error, data) {
                 d3.select(this).style("opacity", .2);
             }
         }); 
-        addBlastSites(locations);       
+        addBlastSites(locations); 
+        
     }
 
     var selectionLines = [
-        {x1: 200, y1: 0, x2: 200, y2: height - margin.top, cursor: "w-resize", class: 'vLine'}, 
-        {x1: 500, y1: 0, x2: 500, y2: height - margin.top, cursor: "w-resize", class: 'vLine'}, 
-        {x1: 0, y1: 50, x2: width - margin.left - margin.right, y2: 50, cursor: "n-resize", class: 'hLine'}, 
-        {x1: 0, y1: 200, x2: width - margin.left - margin.right, y2: 200, cursor: "n-resize", class: 'hLine'},    
+        {x1: 200, y1: 0, x2: 200, y2: height - margin.top, cursor: "w-resize", class: 'vLine', id: 'vLine-1'}, 
+        {x1: 500, y1: 0, x2: 500, y2: height - margin.top, cursor: "w-resize", class: 'vLine', id: 'vLine-2'}, 
+        {x1: 0, y1: 50, x2: width - margin.left - margin.right, y2: 50, cursor: "n-resize", class: 'hLine', id: 'hLine-1'}, 
+        {x1: 0, y1: 200, x2: width - margin.left - margin.right, y2: 200, cursor: "n-resize", class: 'hLine', id: 'hLine-2'},    
     ];
 
     selectionLines.forEach(function(d, i){
@@ -261,7 +286,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         var lonExtent = [config.coordMin[0], config.coordMax[0]];
         var latExtent = [config.coordMin[1], config.coordMax[1]];
         
-        console.log(lonExtent);
+        // console.log(lonExtent);
         
         var lonMin = d3.min(lonExtent);
         var lonMax = d3.max(lonExtent);
@@ -306,3 +331,28 @@ d3.csv("./data/blast-data.csv", function(error, data) {
    }
 
 });
+
+// function getParameterByName(name, url) {
+//     if (!url) url = window.location.href;
+//     name = name.replace(/[\[\]]/g, "\\$&");
+//     var regex = new RegExp("[#&]" + name + "(=([^&#]*)|&|#|$)"),
+//         results = regex.exec(url);
+//     if (!results) return null;
+//     if (!results[2]) return '';
+//     return decodeURIComponent(results[2].replace(/\+/g, " "));
+// }
+
+// console.log(getParameterByName('startYear'));
+// console.log(getParameterByName('endYear'));
+
+function updateHash(data, view){  
+    //data = [startYear, endYear, lowMag, highMag, lon, lat, lod]  
+    var dataValues = (data) ? data.join('/') : '';
+    var viewValues = (view) ? view.join('/') : '';
+    var hash = '#' + dataValues + '/' + viewValues;
+    window.location.hash = hash;
+}
+
+// $(window).on('hashchange', function() {
+//    console.log(window.location.hash); 
+// });
