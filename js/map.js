@@ -1,4 +1,5 @@
-var map, addBlastSites, addAllBlastSites, addBlastHighlightSites, zoomToBlastSite, mapViewData;
+var map, addBlastSites, addAllBlastSites, addBlastHighlightSites, zoomToBlastSite, mapViewData, resetMapView;
+var mapLoaded = false;
 
 var startDate = new Date(1960, 1, 1);
 var endDate = new Date(2016, 4, 30);
@@ -23,6 +24,19 @@ function(
     Point, ClassBreaksRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
     webMercatorUtils, Color, VectorTileLayer
 ) {
+    var initialMapPoint, initialZoomLevel;
+    
+    if(!window.location.hash || window.location.hash == '' || window.location.hash == '#'){
+        //initialize the hash
+        // window.location.hash = '#1964/1980/4/7/0.00/50.00/2';
+        initialMapPoint = [0, 50];
+        initialZoomLevel = 2;
+    } else {
+        var hashData = window.location.href.split('#')[1].split('/');
+        var mapViewDataFromHash = hashData.slice(4, 7);
+        initialMapPoint = [mapViewDataFromHash[0], mapViewDataFromHash[1]];
+        initialZoomLevel = mapViewDataFromHash[2];
+    }     
     
     var vtlayer = new VectorTileLayer("https://www.arcgis.com/sharing/rest/content/items/b187ae2ee9884d90a1fb09e95ceb003d/resources/styles/root.json");
     
@@ -51,9 +65,8 @@ function(
     });        
     
     map = new Map("mapDiv", {
-        center: [0, 50],
-        zoom: 2,
-        // basemap: "satellite",
+        center: initialMapPoint,
+        zoom: initialZoomLevel,
         showAttribution: false
     });
 
@@ -132,9 +145,11 @@ function(
     map.on("extent-change", changeHandler);
     
     map.on("load", function(){
-        if(window.location.hash){
-            console.log(window.location.hash); 
-        }
+        if(!window.location.hash || window.location.hash == '' || window.location.hash == '#'){
+            //initialize the hash
+            window.location.hash = initialHash;   
+        }    
+        parseHashData();
     })
 
     function changeHandler(evt){
@@ -146,14 +161,17 @@ function(
         mapViewData[0] = mapViewData[0].toFixed(2);
         mapViewData[1] = mapViewData[1].toFixed(2);
         
+        
         if(queryParams){
             updateHash(queryParams, mapViewData);
         }
         
+        // console.log(mapViewData); 
+        
         coordMin = webMercatorUtils.xyToLngLat(extent.xmin, extent.ymin);
         coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);
         
-        if(lod >= 5){
+        if(lod >= 3){
             showCircleWithinCurrentExtent({
                 coordMin: coordMin,
                 coordMax: coordMax
@@ -162,7 +180,7 @@ function(
             showAllCircles();
         }
         
-        if(lod >= 11){
+        if(lod >= 9){
             // vtlayer.hide();
             vtlayer.opacity = .5;
             referenceLayer.show();
@@ -175,6 +193,11 @@ function(
         }
 
     } 
+    
+    resetMapView = function(d){
+        map.centerAt(new Point([d[0], d[1]]));
+        map.setZoom(d[2]);
+    }
     
     function getSimplifiedDate(t){
 

@@ -1,9 +1,11 @@
-var startDate = new Date(1960, 1, 1);
+var startDate = new Date(1963, 1, 1);
 var endDate = new Date(2016, 4, 30);
 var docWidth = $(document).width();
 var docHeight = $(document).height();
 var showCircleWithinCurrentExtent, showAllCircles;
-var queryParams;
+var queryParams, updateSliderPositions;
+var sliderInDrag = false;
+var initialHash = '#1964/1980/4/7/0.00/50.00/2';
 
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 0, bottom: 10, left: 50},
@@ -150,6 +152,8 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         .on("dragend", dragend);
 
     function dragmove(d) {
+        sliderInDrag = true;
+        
         // console.log(xScale(endDate));
         var x = d3.event.x,
         xMin = xScale(startDate),
@@ -172,8 +176,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             .attr("y1", y)
             .attr("y2", y);  
         }
-        
-        
+
         var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
         var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
         var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
@@ -200,67 +203,101 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         queryParams = [new Date(d3.min(timeExtent)).getFullYear(), new Date(d3.max(timeExtent)).getFullYear(), d3.min(magExtent).toFixed(1), d3.max(magExtent).toFixed(1)];
         updateHash(queryParams, mapViewData);         
     }
+    
+    updateSliderPositions = function(data){
+        if(!sliderInDrag){
+            if(data){
+                var startYearFromHash = data[0],
+                    endYearFromHash = data[1],
+                    magLowFromHash = data[2],
+                    magHighFromHash = data[3];
+                    
+                var xStart = xScale(new Date(startYearFromHash));
+                var xEnd = xScale(new Date(endYearFromHash));
+                var yLow = yScale(magLowFromHash);
+                var yHigh = yScale(magHighFromHash);
+                
+                d3.select('#vLine0')
+                    .attr("x1", xStart)
+                    .attr("x2", xStart);  
+                    
+                d3.select('#vLine1')
+                    .attr("x1", xEnd)
+                    .attr("x2", xEnd);    
+                    
+                d3.select('#hLine0')
+                    .attr("y1", yLow)
+                    .attr("y2", yLow);  
+                
+                d3.select('#hLine1')
+                    .attr("y1", yHigh)
+                    .attr("y2", yHigh);                                              
+            }
+
+            var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
+            var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
+                
+            var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
+            var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
+            
+            // var format = d3.time.format("%Y");
+            // $('#yearDiv').text(format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent)));
+            // console.log(format(d3.min(timeExtent)), format(d3.max(timeExtent)));
+            
+            var locations = [];
+            d3.selectAll(".circle").each(function(d){
+                // 
+                if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
+                    // d3.select(this).style("fill", "#00A8E8");
+                    d3.select(this).style("opacity", .8);
+                    locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0)])                
+                } else {
+                    d3.select(this).style("opacity", .2);
+                }
+            }); 
+            addBlastSites(locations);             
+        }
+
+    }
 
     function dragend(d){
-        
-        queryPointsByXYRanges();        
-
-        // var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
-        // var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
-            
-        // var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
-        // var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
-        
-        // // var format = d3.time.format("%Y");
-        // // $('#yearDiv').text(format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent)));
-        // // console.log(format(d3.min(timeExtent)), format(d3.max(timeExtent)));
-        
-        // var locations = [];
-        // d3.selectAll(".circle").each(function(d){
-        //     // 
-        //     if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
-        //         // d3.select(this).style("fill", "#00A8E8");
-        //         d3.select(this).style("opacity", .8);
-        //         locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0)])                
-        //     } else {
-        //         d3.select(this).style("opacity", .2);
-        //     }
-        // }); 
-        // addBlastSites(locations);       
+        sliderInDrag = false;
+        // queryPointsByXYRanges();          
+        updateSliderPositions(); 
     }
     
-    function queryPointsByXYRanges(){
+    // function queryPointsByXYRanges(){
         
-        var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
-        var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
+    //     var xRange = [+d3.selectAll('#vLine0').attr('x1'), +d3.selectAll('#vLine1').attr('x1')];
+    //     var yRange = [+d3.selectAll('#hLine0').attr('y1'), +d3.selectAll('#hLine1').attr('y1')];
             
-        var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
-        var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
+    //     var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
+    //     var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
         
-        // var format = d3.time.format("%Y");
-        // $('#yearDiv').text(format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent)));
-        // console.log(format(d3.min(timeExtent)), format(d3.max(timeExtent)));
+    //     // var format = d3.time.format("%Y");
+    //     // $('#yearDiv').text(format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent)));
+    //     // console.log(format(d3.min(timeExtent)), format(d3.max(timeExtent)));
         
-        var locations = [];
-        d3.selectAll(".circle").each(function(d){
-            // 
-            if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
-                // d3.select(this).style("fill", "#00A8E8");
-                d3.select(this).style("opacity", .8);
-                locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0)])                
-            } else {
-                d3.select(this).style("opacity", .2);
-            }
-        }); 
-        addBlastSites(locations); 
+    //     var locations = [];
+    //     d3.selectAll(".circle").each(function(d){
+    //         // 
+    //         if((d.DateTime >= d3.min(timeExtent) && d.DateTime <= d3.max(timeExtent) ) && (+d.Magnitude >= d3.min(magExtent) && +d.Magnitude <= d3.max(magExtent))){
+    //             // d3.select(this).style("fill", "#00A8E8");
+    //             d3.select(this).style("opacity", .8);
+    //             locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0)])                
+    //         } else {
+    //             d3.select(this).style("opacity", .2);
+    //         }
+    //     }); 
+    //     addBlastSites(locations); 
         
-    }
+    // }
 
     var selectionLines = [
-        {x1: 200, y1: 0, x2: 200, y2: height - margin.top, cursor: "w-resize", class: 'vLine', id: 'vLine-1'}, 
-        {x1: 500, y1: 0, x2: 500, y2: height - margin.top, cursor: "w-resize", class: 'vLine', id: 'vLine-2'}, 
-        {x1: 0, y1: 50, x2: width - margin.left - margin.right, y2: 50, cursor: "n-resize", class: 'hLine', id: 'hLine-1'}, 
-        {x1: 0, y1: 200, x2: width - margin.left - margin.right, y2: 200, cursor: "n-resize", class: 'hLine', id: 'hLine-2'},    
+        {x1: 0, y1: 0, x2: 0, y2: height - margin.top, cursor: "w-resize", class: 'vLine'}, 
+        {x1: 0, y1: 0, x2: 0, y2: height - margin.top, cursor: "w-resize", class: 'vLine'}, 
+        {x1: 0, y1: 0, x2: width - margin.left - margin.right, y2: 0, cursor: "n-resize", class: 'hLine'}, 
+        {x1: 0, y1: 0, x2: width - margin.left - margin.right, y2: 0, cursor: "n-resize", class: 'hLine'},    
     ];
 
     selectionLines.forEach(function(d, i){
@@ -345,6 +382,10 @@ d3.csv("./data/blast-data.csv", function(error, data) {
 // console.log(getParameterByName('startYear'));
 // console.log(getParameterByName('endYear'));
 
+// function updateAppView(data){
+    
+// }
+
 function updateHash(data, view){  
     //data = [startYear, endYear, lowMag, highMag, lon, lat, lod]  
     var dataValues = (data) ? data.join('/') : '';
@@ -353,6 +394,34 @@ function updateHash(data, view){
     window.location.hash = hash;
 }
 
-// $(window).on('hashchange', function() {
-//    console.log(window.location.hash); 
-// });
+function parseHashData(){
+    var hashData = window.location.href.split('#')[1].split('/');
+    var chartViewData = hashData.slice(0, 4);
+    var mapViewDataFromHash = hashData.slice(4, 7);
+    
+    if((!queryParams || !arraysEqual(queryParams, chartViewData)) && !sliderInDrag){
+        console.log('update chart');
+        queryParams = chartViewData;
+        updateSliderPositions(queryParams);
+        resetMapView(mapViewDataFromHash);
+    }  
+}
+
+$(window).on('hashchange', function() { 
+    if(!window.location.hash || window.location.hash == '' || window.location.hash == '#'){
+        window.location.hash = initialHash;
+    }
+    parseHashData();
+});
+
+function arraysEqual(arr1, arr2) {
+
+    if(arr1.length !== arr2.length)
+        return false;
+    for(var i = arr1.length; i--;) {
+        if(+arr1[i] !== +arr2[i])
+            return false;
+    }
+
+    return true;
+}
