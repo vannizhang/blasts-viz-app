@@ -166,7 +166,7 @@ function(
             updateHash(queryParams, mapViewData);
         }
         
-        // console.log(mapViewData); 
+        // console.log(extent.xmin, extent.xmax); 
         
         coordMin = webMercatorUtils.xyToLngLat(extent.xmin, extent.ymin);
         coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);

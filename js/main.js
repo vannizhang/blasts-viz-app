@@ -5,7 +5,7 @@ var docHeight = $(document).height();
 var showCircleWithinCurrentExtent, showAllCircles;
 var queryParams, updateSliderPositions;
 var sliderInDrag = false;
-var initialHash = '#1964/1980/4/7/0.00/50.00/2';
+var initialHash = '#1965/1980/4/7/0.00/50.00/2';
 
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 0, bottom: 10, left: 50},
@@ -182,8 +182,32 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
         var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
         
-        var format = d3.time.format("%Y");
+        // var format = d3.time.format("%Y");
 
+        // var yearText = format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent));
+        // var magText = 'magnitude ' + d3.min(magExtent).toFixed(1)+ ' - ' + d3.max(magExtent).toFixed(1);
+        
+        // if($('#yearDiv').text() !== yearText){
+        //     $('#yearDiv').text(yearText); 
+        // }
+        
+        // if(!$("#magDiv").width()) {
+        //     console.log($("#yearDiv").width());
+        //     $("#magDiv").css('width', $("#yearDiv").width()); 
+        // }
+        
+        // if($('#magDiv').text() !== magText){
+        //     $('#magDiv').text(magText); 
+        // }
+        
+        updateBillboard(timeExtent, magExtent);
+        
+        queryParams = [new Date(d3.min(timeExtent)).getFullYear(), new Date(d3.max(timeExtent)).getFullYear(), d3.min(magExtent).toFixed(1), d3.max(magExtent).toFixed(1)];
+        updateHash(queryParams, mapViewData);         
+    }
+    
+    updateBillboard = function(timeExtent, magExtent){
+        var format = d3.time.format("%Y");
         var yearText = format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent));
         var magText = 'magnitude ' + d3.min(magExtent).toFixed(1)+ ' - ' + d3.max(magExtent).toFixed(1);
         
@@ -199,9 +223,6 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         if($('#magDiv').text() !== magText){
             $('#magDiv').text(magText); 
         }
-        
-        queryParams = [new Date(d3.min(timeExtent)).getFullYear(), new Date(d3.max(timeExtent)).getFullYear(), d3.min(magExtent).toFixed(1), d3.max(magExtent).toFixed(1)];
-        updateHash(queryParams, mapViewData);         
     }
     
     updateSliderPositions = function(data){
@@ -240,6 +261,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
             var timeExtent = [getDateByX(xRange[0]), getDateByX(xRange[1])];
             var magExtent = [getMagByY(yRange[0]), getMagByY(yRange[1])];
             
+            updateBillboard(timeExtent, magExtent);
             // var format = d3.time.format("%Y");
             // $('#yearDiv').text(format(d3.min(timeExtent)) + ' - ' + format(d3.max(timeExtent)));
             // console.log(format(d3.min(timeExtent)), format(d3.max(timeExtent)));
@@ -323,35 +345,68 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         var lonExtent = [config.coordMin[0], config.coordMax[0]];
         var latExtent = [config.coordMin[1], config.coordMax[1]];
         
-        // console.log(lonExtent);
+        console.log(lonExtent);
         
-        var lonMin = d3.min(lonExtent);
-        var lonMax = d3.max(lonExtent);
+        // var lonMin = d3.min(lonExtent);
+        // var lonMax = d3.max(lonExtent);
         
-        if((lonMin < 0 && lonMax < 0) || (lonMin > 0 && lonMax >0) || (lonMin > -90) && (lonMax < 90)){
-            d3.selectAll(".circle").each(function(d){
-                //
-                if((+d.Longitude >= d3.min(lonExtent) && +d.Longitude <= d3.max(lonExtent)) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
-                    d3.select(this).attr("display", null);             
+        d3.selectAll(".circle").each(function(d){
+            //cross international date line
+            if(lonExtent[0] > 0 && lonExtent[1] < 0) {
+                if( (+d.Longitude > lonExtent[0] || +d.Longitude < lonExtent[1]) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
+                    d3.select(this).attr("display", null);  
                 } else {
-                    d3.select(this).attr("display", "none");  
+                    d3.select(this).attr("display", "none"); 
                 }
-            }); 
-        }
-        
-        if((lonMin < -90) && (lonMax > 90)){
-            console.log('cross international dateline');
-            d3.selectAll(".circle").each(function(d){
-                //
-                if( ( ( +d.Longitude > -180 && +d.Longitude <= lonMin ) || ( +d.Longitude >= lonMax && +d.Longitude < 180) ) && 
-                    ( +d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))
-                ){
-                    d3.select(this).attr("display", null);             
+            } else {
+                if((+d.Longitude > lonExtent[0] && +d.Longitude < lonExtent[1]) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
+                    d3.select(this).attr("display", null);  
                 } else {
-                    d3.select(this).attr("display", "none");  
+                    d3.select(this).attr("display", "none"); 
                 }
-            }); 
-        }
+            }
+        });
+        
+
+        
+        // if((lonMin < 0 && lonMax < 0) || (lonMin > 0 && lonMax >0) || (lonMin > -90) && (lonMax < 90)){
+        //     d3.selectAll(".circle").each(function(d){
+        //         //
+        //         if((+d.Longitude >= d3.min(lonExtent) && +d.Longitude <= d3.max(lonExtent)) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
+        //             d3.select(this).attr("display", null);             
+        //         } else {
+        //             d3.select(this).attr("display", "none");  
+        //         }
+        //     }); 
+        // } 
+        
+        // if((lonMin < -90) && (lonMax > 90)){
+        //     console.log('cross international dateline');
+        //     d3.selectAll(".circle").each(function(d){
+        //         //
+        //         if( ( ( +d.Longitude > -180 && +d.Longitude <= lonMin ) || ( +d.Longitude >= lonMax && +d.Longitude < 180) ) && 
+        //             ( +d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))
+        //         ){
+        //             d3.select(this).attr("display", null);             
+        //         } else {
+        //             d3.select(this).attr("display", "none");  
+        //         }
+        //     }); 
+        // }
+        
+        // if((lonMin < -90) && (lonMax >= 0 && lonMax <= 90)){
+        //     console.log('cross GMT');
+        //     d3.selectAll(".circle").each(function(d){
+        //         //
+        //         if( ( (+d.Longitude >= lonMin && +d.Longitude < 0) || ( +d.Longitude <= lonMax && +d.Longitude > 0) ) && 
+        //             ( +d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))
+        //         ){
+        //             d3.select(this).attr("display", null);             
+        //         } else {
+        //             d3.select(this).attr("display", "none");  
+        //         }
+        //     }); 
+        // }        
         
         // d3.selectAll(".circle").each(function(d){
         //     //
