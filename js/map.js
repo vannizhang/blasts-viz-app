@@ -173,12 +173,12 @@ function(
         coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);
         
         if(lod >= 3){
-            showCircleWithinCurrentExtent({
+            showBlastsInMapExtent({
                 coordMin: coordMin,
                 coordMax: coordMax
             });
         } else {
-            showAllCircles();
+            showAllBlasts();
         }
         
         if(lod >= 9){

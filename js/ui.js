@@ -1,4 +1,3 @@
-var toggleSideBar;
 var bookmarks = [
     {name: 'Nevada’s Atomic Age', hash: '#1965/1992/1.9/6.7/-116.25/37.13/9'},
     {name: 'Sparwood BC coal', hash: '#1968/1976/3.6/5.9/-116.40/50.38/7'},
@@ -13,20 +12,11 @@ var bookmarks = [
 ]
 
 $(document).ready(function(){
-    toggleSideBar = function(){
-        
-        var sidebarWidth, mapDivWidth;
-        
-        if( $('.meun-icon').hasClass('active')){
-            sidebarWidth = '0';          
-        }
-        else {
-            sidebarWidth = '340px';
-        }
-        
+    
+    var toggleSideBar = function(){
+        var sidebarWidth = ($('.meun-icon').hasClass('active')) ? '0' : '340px';        
         $('#sidebar').css("width", sidebarWidth);
         $('#mapDiv').css("right", sidebarWidth);
-        
         $('.meun-icon').toggleClass('active');
         $('#sidebar').toggleClass('hide');
     }
@@ -70,7 +60,38 @@ $(document).ready(function(){
         window.open(url, 'twitter', opts);
     
         return false;
-    });    
+    }); 
     
+    // add hash change event listener
+    $(window).on('hashchange', function() { 
+        if(!window.location.hash || window.location.hash == '' || window.location.hash == '#'){
+            window.location.hash = initialHash;
+        } 
+        parseHashData();
+    });   
     
+    // add resize end event listener
+    var rtime;
+    var timeout = false;
+    var delta = 200;
+    
+    $(window).resize(function() {
+        rtime = new Date();
+        if (timeout === false) {
+            timeout = true;
+            setTimeout(resizeend, delta);
+        }
+    });
+
+    function resizeend() {
+        if (new Date() - rtime < delta) {
+            setTimeout(resizeend, delta);
+        } else {
+            timeout = false;
+            populateChartElements();
+            updateSliderPositions(queryParams); 
+        }               
+    }        
+    
+    console.info('Hi there, want to see the codes behind this app? it\'s on Github: https://github.com/vannizhang/blasts-viz-app' + '\n' + 'happy coding!');
 });
