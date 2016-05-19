@@ -50,5 +50,30 @@ $(document).ready(function(){
         window.location.hash = bookmarks[index].hash;
     })
     
+    //add twitter share box
+    $('.twitter-popup').on('click', function(event) {
+        var fromYear, toYear;
+        getHashData(function(d){
+           fromYear = d.chartViewData[0];
+           toYear = d.chartViewData[1];
+        });
+        console.log(window.location.href);
+        var message = 'Blast Map! Check out these man-made explosions from ' + fromYear + ' to ' + toYear;
+        var width  = 500,
+            height = 300,
+            left   = ($(window).width()  - width)  / 2,
+            top    = ($(window).height() - height) / 2,
+            url    = 'http://twitter.com/intent/tweet?text=' + message + '&url=' + encodeURIComponent(window.location.href);
+            opts   = 'status=1' +
+                    ',width='  + width  +
+                    ',height=' + height +
+                    ',top='    + top    +
+                    ',left='   + left;
+        
+        window.open(url, 'twitter', opts);
+    
+        return false;
+    });    
+    
     
 });

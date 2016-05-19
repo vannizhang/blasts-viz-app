@@ -445,3 +445,15 @@ function arraysEqual(arr1, arr2) {
     }
     return true;
 }
+
+function getHashData(callback){
+    var hashData = window.location.href.split('#')[1].split('/');
+    var chartViewData = hashData.slice(0, 4);
+    var mapViewDataFromHash = hashData.slice(4, 7);
+    
+    callback({
+        hashData: hashData,
+        chartViewData: chartViewData,
+        mapViewData: mapViewDataFromHash
+    });
+}
