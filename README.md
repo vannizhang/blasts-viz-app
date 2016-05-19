@@ -6,3 +6,4 @@ As global networks of seismic activity detectors came online (lots and lots of [
 
 You can view the live application [here](http://vannizhang.github.io/blasts-viz-app/).
 
+![](./img/screenshot.png)
