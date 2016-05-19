@@ -1,19 +1,21 @@
+// define global variables
 var startDate = new Date(1963, 1, 2);
 var endDate = new Date(2016, 4, 30);
 var magMin = 1, magMax = 7;
 var sliderInDrag = false;
 var initialHash = '#1965/1980/4.0/7.0/0/50/2';
-var colors = ['#B5004D', '#FF5300', '#FFFF00'];
 var showBlastsInMapExtent, showAllCircles;
 var queryParams, updateSliderPositions;
 var populateChartElements;
 
 $(document).ready(function(){
+
     // Get the blasts data
     d3.csv("./data/blast-data.csv", function(error, data) {
         
         var parseDate = d3.time.format("%m/%d/%Y").parse;
-        
+        var colors = ['#B5004D', '#FF5300', '#FFFF00'];
+            
         data.forEach(function(d) {
             d.DateTime = parseDate(d.DateTime);
             d.Magnitude = +d.Magnitude;
@@ -339,9 +341,8 @@ $(document).ready(function(){
                     .call(drag);    
             });  
         }
+        
         populateChartElements();
-
-
     });
 });    
 

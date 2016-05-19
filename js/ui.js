@@ -9,7 +9,7 @@ var bookmarks = [
     {name: 'Neighbor Standoff', hash: '#1974/1999/4.4/5.4/68.04/27.94/5'},
     {name: 'Nuclear Lop Nur', hash: '#1966/1996/4.4/6.8/88.65/41.59/8'},
     {name: 'Moruroa Atol Test bed', hash: '#1968/1996/4.3/6.2/-138.96/-21.97/9'},
-]
+];
 
 $(document).ready(function(){
     
