@@ -18,15 +18,12 @@ $(document).ready(function(){
         var sidebarWidth, mapDivWidth;
         
         if( $('.meun-icon').hasClass('active')){
-            sidebarWidth = '0';
-            // mapDivWidth = '100%';            
+            sidebarWidth = '0';          
         }
         else {
             sidebarWidth = '340px';
-            // mapDivWidth = '80%';
         }
         
-        // console.log($('#mapDiv').css('width'));
         $('#sidebar').css("width", sidebarWidth);
         $('#mapDiv').css("right", sidebarWidth);
         
