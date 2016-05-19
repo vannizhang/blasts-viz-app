@@ -23,14 +23,22 @@ path {
 }
 
 .y.axis text {
-    display: none;
+    fill: #58C7B6;
+    font-size: 20px;
+    text-align: center;
+    /*display: none;*/
+}
+
+.y-axis-gradient-line {
+    stroke: url(#temperature-gradient);
 }
 
 #mapDiv {
     top: 0;
     left: 0;
+    right: 0;
     position: absolute;
-    width: 100%;
+    max-width: 100%;
     height: 60%;
     transition: margin-right .5s;
 }
@@ -70,17 +78,59 @@ path {
     width: 0px;
     height: 60%;
     z-index: 99;
-    background-color: #111;
+    background-color: rgba(34, 40, 40, 0.8);
+    /*border: 0.5px #58C7B6 solid;*/
     transition: 0.5s;
     color: #eee;
+    overflow: auto;
+    
 }
 
 #sidebar.hide {
     display: none;
 }
 
-#foo {
-    margin: 10px 20px;
+.wrapper {
+    padding: 10px 20px;
+    border-top: 1px solid rgba(88,199,182,0.2);
+}
+
+#siderbar-title-wrapper{
+    padding-top: 15px;
+    padding-bottom: 10px;
+}
+
+.sidebar-title {
+    text-align: center;
+    font-size: 24px; 
+    font-weight: 100;
+    /*font-weight: 100; */
+    /*text-shadow: 0px 0px 1px rgba(88, 199, 182, 1);*/
+    /*letter-spacing: -3; */
+    color: rgba(88, 199, 182, 0.9);    
+    margin: 0px 10px 5px;
+}
+
+.sidebar-title.sub-title {
+    /*text-align: left;*/
+    margin: 0px 30px;
+    font-size: 14px; 
+}
+
+.bookmark-div {
+    text-align: center;
+    height: 40px;
+    line-height: 40px;
+    margin: 10px 0px;
+    background-color: rgba(88,199,182,0.2);
+    color: #58C5B6;
+    font-size: 20px;
+    font-weight: 100;
+    cursor: pointer;
+}
+
+.bookmark-div:hover {
+    background-color:rgba(88,199,182,0.35);
 }
 
 #billboard {

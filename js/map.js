@@ -1,4 +1,6 @@
-var map, addBlastSites, addAllBlastSites, addBlastHighlightSites, zoomToBlastSite, mapViewData, resetMapView;
+var map, addBlastSites, addAllBlastSites, addBlastHighlightSites, zoomToBlastSite;
+var mapViewData = [];
+var resetMapView;
 var mapLoaded = false;
 
 var startDate = new Date(1960, 1, 1);
@@ -16,13 +18,15 @@ require(["esri/map",
 "esri/symbols/SimpleMarkerSymbol",
 "esri/symbols/SimpleLineSymbol",
 "esri/geometry/webMercatorUtils",
+"esri/SpatialReference",
 "esri/Color",
 "esri/layers/VectorTileLayer",
 "dojo/domReady!"], 
 function(
     Map, Graphic, GraphicsLayer, ArcGISTiledMapServiceLayer,
     Point, ClassBreaksRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
-    webMercatorUtils, Color, VectorTileLayer
+    webMercatorUtils, SpatialReference, 
+    Color, VectorTileLayer
 ) {
     var initialMapPoint, initialZoomLevel;
     
@@ -79,10 +83,10 @@ function(
     map.addLayer(blastHighlightLayer);
     
     var rd = new ClassBreaksRenderer(new SimpleMarkerSymbol(), "mag");
-    rd.addBreak(6, 8, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 255, 0])),new Color([255, 255, 255, 0.9])));
-    rd.addBreak(4, 6, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 0, 0])),new Color([255, 255, 0, 0.8])));
-    rd.addBreak(2, 4, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 83, 0, 0])),new Color([255, 83, 0, 0.7])));
-    rd.addBreak(0, 2, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([181, 0, 77, 0])),new Color([181, 0, 77, 0.6])));
+    // rd.addBreak(6, 8, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 255, 0])),new Color([255, 255, 255, 0.9])));
+    rd.addBreak(5, 7, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 0, 0])),new Color([255, 255, 0, 0.8])));
+    rd.addBreak(3, 5, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 83, 0, 0])),new Color([255, 83, 0, 0.7])));
+    rd.addBreak(0, 3, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 3, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([181, 0, 77, 0])),new Color([181, 0, 77, 0.6])));
     
     blastLayer.renderer = rd;
     // allBlastLayer.renderer = rd;
@@ -98,18 +102,6 @@ function(
         
         // console.log(blastLayer);
     }
-    
-    // addAllBlastSites = function(locations){
-    //     // map.getLayer('blastLayer').clear(); 
-    //     // map.getLayer('blastHighlightLayer').clear();   
-
-    //     locations.forEach(function(d){        
-    //         var graphic = new Graphic(new Point(d.Longitude, d.Latitude), null, {mag: +d.Magnitude});    
-    //         map.getLayer('allBlastLayer').add(graphic);          
-    //     });
-        
-    //     // console.log(blastLayer);
-    // }    
 
     addBlastHighlightSites = function(location, hightlight){
         map.getLayer('blastHighlightLayer').clear();  
@@ -142,31 +134,40 @@ function(
         map.centerAt(new Point(location[0], location[1]));
     }
     
-    map.on("extent-change", changeHandler);
+    map.on("extent-change", changeHandler); 
     
     map.on("load", function(){
         if(!window.location.hash || window.location.hash == '' || window.location.hash == '#'){
             //initialize the hash
-            window.location.hash = initialHash;   
-        }    
-        parseHashData();
-    })
+            window.location.hash = initialHash; 
+        } else {
+            parseHashData();  
+        } 
+        
+        mapLoaded = true;   
+        
+    });
+    
+    
 
     function changeHandler(evt){
         var extent = evt.extent;
         var lod = evt.lod.level;
         var mapCenter = evt.extent.getCenter();
-        mapViewData = webMercatorUtils.xyToLngLat(mapCenter.x, mapCenter.y);
-        mapViewData.push(lod);
-        mapViewData[0] = mapViewData[0].toFixed(2);
-        mapViewData[1] = mapViewData[1].toFixed(2);
         
-        
-        if(queryParams){
-            updateHash(queryParams, mapViewData);
+        if(mapViewData) {
+            mapViewData.length = 0;
         }
+        var webMercCoord = webMercatorUtils.xyToLngLat(mapCenter.x, mapCenter.y);
+        var tempMapView = []
+        tempMapView[0] = webMercCoord[0].toFixed(2);
+        tempMapView[1] = webMercCoord[1].toFixed(2);
+        tempMapView[2] = lod;
+        mapViewData = tempMapView;
         
-        // console.log(extent.xmin, extent.xmax); 
+        if(queryParams && mapLoaded){
+            updateHash(queryParams, tempMapView);
+        }
         
         coordMin = webMercatorUtils.xyToLngLat(extent.xmin, extent.ymin);
         coordMax = webMercatorUtils.xyToLngLat(extent.xmax, extent.ymax);
@@ -195,8 +196,16 @@ function(
     } 
     
     resetMapView = function(d){
-        map.centerAt(new Point([d[0], d[1]]));
-        map.setZoom(d[2]);
+        var lon = +d[0];
+        var lat = +d[1];
+        var zoom = +d[2];
+        var centerPoint = new Point([lon, lat], new SpatialReference({ wkid:4326 }));
+        var centerPointMerc = webMercatorUtils.geographicToWebMercator(centerPoint);
+
+        map.setZoom(zoom);
+        // console.log('reset zoom finish');
+        map.centerAt(centerPointMerc);
+        // console.log('reset map center finish');
     }
     
     function getSimplifiedDate(t){

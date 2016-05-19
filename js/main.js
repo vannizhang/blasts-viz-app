@@ -1,11 +1,11 @@
-var startDate = new Date(1963, 1, 1);
+var startDate = new Date(1963, 1, 2);
 var endDate = new Date(2016, 4, 30);
 var docWidth = $(document).width();
 var docHeight = $(document).height();
 var showCircleWithinCurrentExtent, showAllCircles;
 var queryParams, updateSliderPositions;
 var sliderInDrag = false;
-var initialHash = '#1965/1980/4/7/0.00/50.00/2';
+var initialHash = '#1965/1980/4.0/7.0/0/50/2';
 
 // Set the dimensions of the canvas / graph
 var margin = {top: 30, right: 0, bottom: 10, left: 50},
@@ -31,7 +31,7 @@ var xScale = d3.time.scale()
     .range([0, width - margin.left - margin.right]);
     
 var yScale = d3.scale.linear()
-    .domain([1, 8])
+    .domain([1, 7])
     .range([(height - margin.top), 0]);
 
 // Define the axes
@@ -49,9 +49,16 @@ var xAxis = d3.svg.axis()
 var yAxis = d3.svg.axis()
     .scale(yScale)
     .orient("left")
-    // .tickValues(yScale.domain())    
-    .ticks(10)
-    .tickPadding(12);
+    .tickValues(yScale.domain())    
+    .tickFormat(function(d){
+        if(d == 1){
+            return '-  ';
+        } else {
+            return '+';
+        }
+    })
+    .ticks(2)
+    .tickPadding(8);
     // .innerTickSize(-(width - margin.left - margin.right));
 
 // Add the X Axis
@@ -63,30 +70,60 @@ svg.append("g")
 // Add the Y Axis
 svg.append("g")
     .attr("class", "y axis")
-    .call(yAxis);    
-    
-svg.append("svg:image")
-   .attr('x', -35)
-   .attr('y', function(d) {return yScale(1.5);})
-   .attr('width', 30)
-   .attr('height', 30)
-   .attr("xlink:href","./img/less.png")
-   
-svg.append("svg:image")
-   .attr('x', -35)
-   .attr('y', function(d) {return yScale(8);})
-   .attr('width', 30)
-   .attr('height', 30)
-   .attr("xlink:href","./img/more.png")   
+    .call(yAxis); 
+
+//re-style y axis ticks    
+d3.select('.y').selectAll('text').each(function(d){
+    if(d == 1){
+        d3.select(this)
+        .attr('x', -16)
+        .style('fill', function(d){
+            return '#B5004D';
+        });      
+          
+    } else {
+        d3.select(this).style('fill', function(d){
+            return '#FFFF00';
+        });            
+    }    
+});
+
+var yAxisGradientLine = svg.append('line')
+    .attr({
+        'x1': -19.5,
+        'y1': 10,
+        'x2': -19.5,
+        'y2': height - margin.top -7
+    })
+    // .style("display", "none")
+    .attr('stroke-width', '2')
+    .style('opacity', 1)
+    .attr("stroke", "#998743")
+    .attr('class', 'y-axis-gradient-line');
+ 
+//create gradient color encoding object  
+svg.append("linearGradient")
+    .attr("id", "temperature-gradient")
+    .attr("gradientUnits", "userSpaceOnUse")
+    .attr("x1", 0).attr("y1", yScale(1))
+    .attr("x2", 0).attr("y2", yScale(7))
+    .selectAll("stop")
+        .data([
+            {offset: "0%", color: "#B5004D"},
+            {offset: "50%", color: "#FF5300"},
+            {offset: "100%", color: "#FFFF00"}
+        ])
+    .enter().append("stop")
+        .attr("offset", function(d) { return d.offset; })
+        .attr("stop-color", function(d) { return d.color; });    
     
 var radiusScale = d3.scale.linear()
-    .domain([0, 10])
-    .range([0, 10]);  
+    .domain([0, 7])
+    .range([1, 2]);  
     
 var colorScale = d3.scale.linear()
-    .domain([0, 2, 4, 6])
-    // .range(['#2c7bb6', '#d7191c']);
-    .range(['#B5004D', '#FF5300', '#FFFF00', '#FFFFFF']);
+    .domain([2, 4, 6])
+    .range(['#B5004D', '#FF5300', '#FFFF00']);
     
 // Get the data
 d3.csv("./data/blast-data.csv", function(error, data) {
@@ -107,8 +144,8 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         .attr("cx",function(d) {return xScale(d.DateTime);})
         .attr("cy",function(d) {return yScale(d.Magnitude);})
         .attr("r",function(d) {
-            // return radiusScale(d.Magnitude);
-            return 2;
+            return radiusScale(d.Magnitude);
+            // return 2;
         })
         .style("fill", function(d) {
             return colorScale(+d.Magnitude);
@@ -216,7 +253,6 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         }
         
         if(!$("#magDiv").width()) {
-            console.log($("#yearDiv").width());
             $("#magDiv").css('width', $("#yearDiv").width()); 
         }
         
@@ -233,8 +269,8 @@ d3.csv("./data/blast-data.csv", function(error, data) {
                     magLowFromHash = data[2],
                     magHighFromHash = data[3];
                     
-                var xStart = xScale(new Date(startYearFromHash));
-                var xEnd = xScale(new Date(endYearFromHash));
+                var xStart = xScale(new Date(startYearFromHash, 1, 2));
+                var xEnd = xScale(new Date(endYearFromHash, 1, 2));
                 var yLow = yScale(magLowFromHash);
                 var yHigh = yScale(magHighFromHash);
                 
@@ -319,7 +355,7 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         {x1: 0, y1: 0, x2: 0, y2: height - margin.top, cursor: "w-resize", class: 'vLine'}, 
         {x1: 0, y1: 0, x2: 0, y2: height - margin.top, cursor: "w-resize", class: 'vLine'}, 
         {x1: 0, y1: 0, x2: width - margin.left - margin.right, y2: 0, cursor: "n-resize", class: 'hLine'}, 
-        {x1: 0, y1: 0, x2: width - margin.left - margin.right, y2: 0, cursor: "n-resize", class: 'hLine'},    
+        {x1: 0, y1: 0, x2: width - margin.left - margin.right, y2: 0, cursor: "n-resize", class: 'hLine'},   
     ];
 
     selectionLines.forEach(function(d, i){
@@ -345,11 +381,6 @@ d3.csv("./data/blast-data.csv", function(error, data) {
         var lonExtent = [config.coordMin[0], config.coordMax[0]];
         var latExtent = [config.coordMin[1], config.coordMax[1]];
         
-        console.log(lonExtent);
-        
-        // var lonMin = d3.min(lonExtent);
-        // var lonMax = d3.max(lonExtent);
-        
         d3.selectAll(".circle").each(function(d){
             //cross international date line
             if(lonExtent[0] > 0 && lonExtent[1] < 0) {
@@ -366,56 +397,6 @@ d3.csv("./data/blast-data.csv", function(error, data) {
                 }
             }
         });
-        
-
-        
-        // if((lonMin < 0 && lonMax < 0) || (lonMin > 0 && lonMax >0) || (lonMin > -90) && (lonMax < 90)){
-        //     d3.selectAll(".circle").each(function(d){
-        //         //
-        //         if((+d.Longitude >= d3.min(lonExtent) && +d.Longitude <= d3.max(lonExtent)) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
-        //             d3.select(this).attr("display", null);             
-        //         } else {
-        //             d3.select(this).attr("display", "none");  
-        //         }
-        //     }); 
-        // } 
-        
-        // if((lonMin < -90) && (lonMax > 90)){
-        //     console.log('cross international dateline');
-        //     d3.selectAll(".circle").each(function(d){
-        //         //
-        //         if( ( ( +d.Longitude > -180 && +d.Longitude <= lonMin ) || ( +d.Longitude >= lonMax && +d.Longitude < 180) ) && 
-        //             ( +d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))
-        //         ){
-        //             d3.select(this).attr("display", null);             
-        //         } else {
-        //             d3.select(this).attr("display", "none");  
-        //         }
-        //     }); 
-        // }
-        
-        // if((lonMin < -90) && (lonMax >= 0 && lonMax <= 90)){
-        //     console.log('cross GMT');
-        //     d3.selectAll(".circle").each(function(d){
-        //         //
-        //         if( ( (+d.Longitude >= lonMin && +d.Longitude < 0) || ( +d.Longitude <= lonMax && +d.Longitude > 0) ) && 
-        //             ( +d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))
-        //         ){
-        //             d3.select(this).attr("display", null);             
-        //         } else {
-        //             d3.select(this).attr("display", "none");  
-        //         }
-        //     }); 
-        // }        
-        
-        // d3.selectAll(".circle").each(function(d){
-        //     //
-        //     if((+d.Longitude >= d3.min(lonExtent) && +d.Longitude <= d3.max(lonExtent)) && (+d.Latitude >= d3.min(latExtent) && +d.Latitude <= d3.max(latExtent))){
-        //         d3.select(this).attr("display", null);             
-        //     } else {
-        //         d3.select(this).attr("display", "none");  
-        //     }
-        // }); 
     }
     
    showAllCircles = function(){
@@ -423,23 +404,6 @@ d3.csv("./data/blast-data.csv", function(error, data) {
    }
 
 });
-
-// function getParameterByName(name, url) {
-//     if (!url) url = window.location.href;
-//     name = name.replace(/[\[\]]/g, "\\$&");
-//     var regex = new RegExp("[#&]" + name + "(=([^&#]*)|&|#|$)"),
-//         results = regex.exec(url);
-//     if (!results) return null;
-//     if (!results[2]) return '';
-//     return decodeURIComponent(results[2].replace(/\+/g, " "));
-// }
-
-// console.log(getParameterByName('startYear'));
-// console.log(getParameterByName('endYear'));
-
-// function updateAppView(data){
-    
-// }
 
 function updateHash(data, view){  
     //data = [startYear, endYear, lowMag, highMag, lon, lat, lod]  
@@ -453,10 +417,10 @@ function parseHashData(){
     var hashData = window.location.href.split('#')[1].split('/');
     var chartViewData = hashData.slice(0, 4);
     var mapViewDataFromHash = hashData.slice(4, 7);
-    
+        
     if((!queryParams || !arraysEqual(queryParams, chartViewData)) && !sliderInDrag){
-        console.log('update chart');
         queryParams = chartViewData;
+        // console.log(queryParams);
         updateSliderPositions(queryParams);
         resetMapView(mapViewDataFromHash);
     }  
@@ -465,8 +429,10 @@ function parseHashData(){
 $(window).on('hashchange', function() { 
     if(!window.location.hash || window.location.hash == '' || window.location.hash == '#'){
         window.location.hash = initialHash;
+        parseHashData();
+    } else {
+        parseHashData();
     }
-    parseHashData();
 });
 
 function arraysEqual(arr1, arr2) {
@@ -477,6 +443,5 @@ function arraysEqual(arr1, arr2) {
         if(+arr1[i] !== +arr2[i])
             return false;
     }
-
     return true;
 }
