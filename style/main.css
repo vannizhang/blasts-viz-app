@@ -81,7 +81,7 @@ path {
     background-color: rgba(34, 40, 40, 0.8);
     /*border: 0.5px #58C7B6 solid;*/
     transition: 0.5s;
-    color: #eee;
+    color: rgba(88, 199, 182, 0.9);    
     overflow: auto;
     
 }
@@ -93,6 +93,15 @@ path {
 .wrapper {
     padding: 10px 20px;
     border-top: 1px solid rgba(88,199,182,0.2);
+}
+
+.wrapper span {
+    font-size: 14px;
+    line-height: 16px;
+}
+
+.wrapper span a {
+    color: rgba(88, 199, 182, 0.9); 
 }
 
 #siderbar-title-wrapper{
@@ -107,7 +116,6 @@ path {
     /*font-weight: 100; */
     /*text-shadow: 0px 0px 1px rgba(88, 199, 182, 1);*/
     /*letter-spacing: -3; */
-    color: rgba(88, 199, 182, 0.9);    
     margin: 0px 10px 5px;
 }
 
