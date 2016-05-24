@@ -17,12 +17,13 @@ require(["esri/map",
     "esri/SpatialReference",
     "esri/Color",
     "esri/layers/VectorTileLayer",
+    "esri/InfoTemplate",
     "dojo/domReady!"
 ], function(
     Map, Graphic, GraphicsLayer, ArcGISTiledMapServiceLayer,
     Point, ClassBreaksRenderer, SimpleMarkerSymbol, SimpleLineSymbol,
     webMercatorUtils, SpatialReference, 
-    Color, VectorTileLayer
+    Color, VectorTileLayer, InfoTemplate
 ) {
     var initialMapPoint, initialZoomLevel;
     
@@ -62,7 +63,8 @@ require(["esri/map",
     map = new Map("mapDiv", {
         center: initialMapPoint,
         zoom: initialZoomLevel,
-        showAttribution: false
+        showAttribution: false,
+        logo: false
     });
     
     map.addLayers([
@@ -74,7 +76,7 @@ require(["esri/map",
     ])
     
     // add renderer to blasts layer
-    var rd = new ClassBreaksRenderer(new SimpleMarkerSymbol(), "mag");
+    var rd = new ClassBreaksRenderer(new SimpleMarkerSymbol(), "magnitude");
     rd.addBreak(5, 7, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 0, 0])),new Color([255, 255, 0, 0.8])));
     rd.addBreak(3, 5, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 83, 0, 0])),new Color([255, 83, 0, 0.7])));
     rd.addBreak(0, 3, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 3, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([181, 0, 77, 0])),new Color([181, 0, 77, 0.6])));
@@ -83,14 +85,29 @@ require(["esri/map",
     //populate blast points to map
     addBlastSites = function(locations){
         map.getLayer('blastLayer').clear(); 
-        locations.forEach(function(d){        
-            var graphic = new Graphic(new Point(d[0], d[1]), null, {mag: +d[2]});    
+        locations.forEach(function(d){             
+            var graphic = new Graphic(new Point(d[0], d[1]), null, {lon: +d[0], lat: +d[1], magnitude: +d[2], datetime: +d[3]});    
             map.getLayer('blastLayer').add(graphic);          
         });
     }
     
+    //add hover event listener to balst points layer
+    blastLayer.on('mouse-over', function(item){
+        addBlastHighlightSites([
+            item.graphic.attributes.lon,
+            item.graphic.attributes.lat,
+            item.graphic.attributes.datetime,
+            item.graphic.attributes.magnitude
+        ]);
+    });
+    
+    blastLayer.on('mouse-out', function(item){
+        map.infoWindow.hide();
+        map.getLayer('blastHighlightLayer').clear(); 
+    })
+
     //add the hightlight point to map
-    addBlastHighlightSites = function(location, hightlight){
+    addBlastHighlightSites = function(location){
         map.getLayer('blastHighlightLayer').clear();  
         var blastLocation = new Point(location[0], location[1]);
         var symbol = new SimpleMarkerSymbol(
@@ -104,15 +121,11 @@ require(["esri/map",
             datetime: location[2],
             magnitude: location[3]
         };
-        
-        var infoTemplateContent = parseDateForInfoWindow(attributes.datetime) + '<br>';
-        infoTemplateContent +=  'magnitude ' + attributes.magnitude + '<br>';     
-        
+
         var graphic = new Graphic(blastLocation, symbol);    
         map.getLayer('blastHighlightLayer').add(graphic);  
         
-        map.infoWindow.setContent(infoTemplateContent);
-        map.infoWindow.show(blastLocation, map.getInfoWindowAnchor(blastLocation));
+        showInfoWindow(blastLocation, attributes);
     }    
     
     zoomToBlastSite = function(location){
@@ -182,6 +195,19 @@ require(["esri/map",
         var centerPointMerc = webMercatorUtils.geographicToWebMercator(centerPoint);
         map.setZoom(zoom);
         map.centerAt(centerPointMerc);
+    }
+    
+    function showInfoWindow(geom, attr){
+        var attributes = {
+            datetime: attr.datetime,
+            magnitude: attr.magnitude
+        };
+        
+        var infoTemplateContent = parseDateForInfoWindow(attributes.datetime) + '<br>';
+        infoTemplateContent +=  'magnitude ' + attributes.magnitude + '<br>';     
+         
+        map.infoWindow.setContent(infoTemplateContent);
+        map.infoWindow.show(geom, map.getInfoWindowAnchor(geom));
     }
     
     function parseDateForInfoWindow(t){

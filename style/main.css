@@ -56,7 +56,7 @@ path {
     top: 20px;
     right: 0px;
     position: absolute;
-    z-index: 99;
+    z-index: 100;
 }
 
 .navbar-item {
@@ -106,7 +106,7 @@ path {
     text-align: center;
     vertical-align: middle; 
     cursor: pointer;
-    background-color: rgba(34, 40, 40, 1);
+    background-color: rgba(34, 40, 40, 0.9);
 }
 
 .wrapper-text {
@@ -129,7 +129,7 @@ path {
 
 .sidebar-title {
     text-align: center;
-    font-size: 24px; 
+    font-size: 60px; 
     font-weight: 100;
     /*font-weight: 100; */
     /*text-shadow: 0px 0px 1px rgba(88, 199, 182, 1);*/
@@ -140,7 +140,7 @@ path {
 .sidebar-title.sub-title {
     /*text-align: left;*/
     margin: 0px 30px;
-    font-size: 14px; 
+    font-size: 16px; 
 }
 
 .bookmark-div {
@@ -165,7 +165,7 @@ path {
     margin: 5px auto;
     left: 0px;
     right:0px;
-    z-index: 999;
+    z-index: 99;
     color: #FFF;
     opacity: 0.5;
     text-align: center;

@@ -194,7 +194,7 @@ $(document).ready(function(){
                     d3.selectAll(".circle").each(function(d){
                         if((d.DateTime >= d3.min(selectionExtent[0]) && d.DateTime <= d3.max(selectionExtent[0]) ) && (+d.Magnitude >= d3.min(selectionExtent[1]) && +d.Magnitude <= d3.max(selectionExtent[1]))){
                             d3.select(this).style("opacity", .8);
-                            locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0)]);                
+                            locations.push([d.Longitude, d.Latitude, d.Magnitude.toFixed(0), d.DateTime]);                
                         } else {
                             d3.select(this).style("opacity", .2);
                         }
