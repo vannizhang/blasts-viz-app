@@ -46,12 +46,12 @@ $(document).ready(function(){
            fromYear = d.chartViewData[0];
            toYear = d.chartViewData[1];
         });
-        var message = 'Blast Map! Check out these man-made explosions from ' + fromYear + ' to ' + toYear;
+        var message = 'Check out these man-made explosions from ' + fromYear + ' to ' + toYear;
         var width  = 500,
             height = 300,
             left   = ($(window).width()  - width)  / 2,
             top    = ($(window).height() - height) / 2,
-            url    = 'http://twitter.com/intent/tweet?text=' + message + '&url=' + encodeURIComponent(window.location.href);
+            url    = 'http://twitter.com/intent/tweet?hashtags=BlastMap&text=' + message + '&url=' + encodeURIComponent(window.location.href);
             opts   = 'status=1' +
                     ',width='  + width  +
                     ',height=' + height +
