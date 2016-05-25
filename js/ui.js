@@ -36,7 +36,6 @@ $(document).ready(function(){
     
     $('.bookmark-div').on('click', function(){
         var index = this.id.split('-')[1];
-        console.log(bookmarks[index]);
         window.location.hash = bookmarks[index].hash;
     })
     
@@ -47,7 +46,6 @@ $(document).ready(function(){
            fromYear = d.chartViewData[0];
            toYear = d.chartViewData[1];
         });
-        console.log(window.location.href);
         var message = 'Blast Map! Check out these man-made explosions from ' + fromYear + ' to ' + toYear;
         var width  = 500,
             height = 300,
