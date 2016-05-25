@@ -219,7 +219,7 @@ $(document).ready(function(){
                         d3.select('#vLine0-label')
                             .attr("x", xStart - selectionVLineRectLabelWidth/2)
                             .text(function(){
-                                return startYearFromHash.slice(-2);
+                                return startYearFromHash.toString().slice(-2);
                             });                             
                             
                         d3.select('#vLine1-rect')
@@ -228,7 +228,7 @@ $(document).ready(function(){
                         d3.select('#vLine1-label')
                             .attr("x", xEnd - selectionVLineRectLabelWidth/2)
                             .text(function(){
-                                return endYearFromHash.slice(-2);
+                                return endYearFromHash.toString().slice(-2);
                             });                                                            
                             
                         d3.select('#hLine0-rect')

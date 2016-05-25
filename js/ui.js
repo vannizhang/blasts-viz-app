@@ -1,7 +1,7 @@
 var bookmarks = [
     {name: 'Just the Giants', hash: '#1963/2016/4.5/7.0/-8.83/26.04/1'},
     {name: 'Nevada’s Atomic Age', hash: '#1965/1992/1.9/6.7/-116.25/37.13/9'},
-    {name: 'Coalscape', hash: '#1968/1971/3.6/5.9/-114.83/49.77/16'},
+    {name: 'Coalscape', hash: '#1968/1971/3.6/5.9/-114.83/49.77/13'},
     {name: 'Mt St Helens’ Shadow', hash: '#1980/2011/1.0/3.2/-122.37/46.32/10'},
     {name: 'Centralia (WA) Triplets', hash: '#1980/2011/1.0/4.3/-122.80/46.74/11'},
     {name: 'Semipalatinsk Polygon', hash: '#1963/1990/4.2/6.7/78.44/49.83/8'},
@@ -19,6 +19,7 @@ $(document).ready(function(){
                 
         $('#sidebar').css("width", sidebarWidth);
         $('#navbar').css("right", sidebarWidth);
+        $('#attribution').css("right", sidebarWidth);
         $('.meun-icon').toggleClass('active');
         $('#sidebar').toggleClass('hide');
     }
