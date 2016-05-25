@@ -1,19 +1,23 @@
 // define global variables
 var startDate = new Date(1963, 1, 2);
 var endDate = new Date(2016, 4, 30);
-var magMin = 1, magMax = 7;
+var magMin = 1, magMax = 7.5;
 var sliderInDrag = false;
-var initialHash = '#1965/1980/4.0/7.0/0/50/2';
+var selectionVLineRectLabelWidth = 20, selectionVLineRectLabelHeight = 15;
+var selectionHLineRectLabelWidth = 24, selectionHLineRectLabelHeight = 15;
+var selectionHRectOffset = 1;
+var initialHash = '#1965/2000/2.2/6.7/-115.79/37.63/5';
 var showBlastsInMapExtent, showAllCircles;
 var queryParams, updateSliderPositions;
 var populateChartElements;
 
 $(document).ready(function(){
-
+    
     // Get the blasts data
     d3.csv("./data/blast-data.csv", function(error, data) {
         
         var parseDate = d3.time.format("%m/%d/%Y").parse;
+        var formatYear = d3.time.format("%Y");
         var colors = ['#B5004D', '#FF5300', '#FFFF00'];
             
         data.forEach(function(d) {
@@ -23,7 +27,7 @@ $(document).ready(function(){
 
         var radiusScale = d3.scale.linear()
             .domain([0, magMax])
-            .range([1, 2]);  
+            .range([1, 3]);  
             
         var colorScale = d3.scale.linear()
             .domain([2, 4, 6])
@@ -107,16 +111,39 @@ $(document).ready(function(){
                     yMax = yScale(magMin);
                     y = (y < yMin) ? yMin : y;
                     y = (y > yMax) ? yMax : y;
+                    
+                var lineID = this.id.split('-')[0];
+                var rectID = lineID + '-rect';
+                var rectLabelID = lineID + '-label';
                 
                 // update position of sliders
                 if(d3.select(this).attr('class') == 'vLine'){
-                    d3.select(this)
-                    .attr("x1", x)
-                    .attr("x2", x);   
-                } else {
-                    d3.select(this)
-                    .attr("y1", y)
-                    .attr("y2", y);  
+                    d3.select('#' + lineID)
+                        .attr("x1", x)
+                        .attr("x2", x);  
+                        
+                    d3.select('#' + rectID)
+                        .attr("x", x - selectionVLineRectLabelWidth/2);
+                        
+                    d3.select('#' + rectLabelID)
+                        .attr("x", x - selectionVLineRectLabelWidth/2)
+                        .text(function(){
+                            return formatYear(getDateByX(d3.select('#' + lineID).attr('x1'))).slice(-2);
+                        });                        
+                    
+                } else {                        
+                    d3.select('#' + lineID)
+                        .attr("y1", y)
+                        .attr("y2", y);  
+                        
+                    d3.select('#' + rectID)
+                        .attr("y", y - selectionHLineRectLabelHeight  - selectionHRectOffset);  
+                        
+                    d3.select('#' + rectLabelID)
+                        .attr("y", y)
+                        .text(function(){
+                            return getMagByY(d3.select('#' + lineID).attr('y1')).toFixed(1);
+                        });                                                
                 }
                 
                 var selectionExtent = getSliderSelectionExtent();
@@ -139,7 +166,7 @@ $(document).ready(function(){
             }
             
             updateBillboard = function(timeExtent, magExtent){
-                var formatYear = d3.time.format("%Y");
+                // var formatYear = d3.time.format("%Y");
                 var yearText = formatYear(d3.min(timeExtent)) + ' - ' + formatYear(d3.max(timeExtent));
                 var magText = 'magnitude ' + d3.min(magExtent).toFixed(1)+ ' - ' + d3.max(magExtent).toFixed(1);
                 
@@ -184,7 +211,43 @@ $(document).ready(function(){
                         
                         d3.select('#hLine1')
                             .attr("y1", yHigh)
-                            .attr("y2", yHigh);                                              
+                            .attr("y2", yHigh);     
+                            
+                        d3.select('#vLine0-rect')
+                            .attr("x", xStart - selectionVLineRectLabelWidth/2);
+                            
+                        d3.select('#vLine0-label')
+                            .attr("x", xStart - selectionVLineRectLabelWidth/2)
+                            .text(function(){
+                                return startYearFromHash.slice(-2);
+                            });                             
+                            
+                        d3.select('#vLine1-rect')
+                            .attr("x", xEnd - selectionVLineRectLabelWidth/2);      
+                            
+                        d3.select('#vLine1-label')
+                            .attr("x", xEnd - selectionVLineRectLabelWidth/2)
+                            .text(function(){
+                                return endYearFromHash.slice(-2);
+                            });                                                            
+                            
+                        d3.select('#hLine0-rect')
+                            .attr("y", yLow - selectionHLineRectLabelHeight - selectionHRectOffset);  
+                            
+                        d3.select('#hLine0-label')
+                            .attr("y", yLow)
+                            .text(function(){
+                                return magLowFromHash;
+                            });                                       
+                            
+                        d3.select('#hLine1-rect')
+                            .attr("y", yHigh - selectionHLineRectLabelHeight - selectionHRectOffset);    
+                            
+                        d3.select('#hLine1-label')
+                            .attr("y", yHigh)
+                            .text(function(){
+                                return magHighFromHash;
+                            });                                                                                                    
                     }
                     
                     var locations = [];
@@ -325,6 +388,13 @@ $(document).ready(function(){
                 
             //drwa the slider lines  
             selectionLines.forEach(function(d, i){
+                
+                var selectionLineID = d.class + i % 2;
+                
+                var rectAttr = (d.class=='vLine') 
+                    ? [0, -selectionVLineRectLabelHeight, selectionVLineRectLabelWidth, selectionVLineRectLabelHeight] 
+                    : [0, 0, selectionHLineRectLabelWidth, selectionHLineRectLabelHeight];
+                
                 var selectionLine = svg.append('line')
                     .attr({
                         'x1': +d.x1,
@@ -336,10 +406,32 @@ $(document).ready(function(){
                     .style('opacity', 0.3)
                     .attr("stroke", "#58C7B6")
                     .attr('class', d.class)
-                    .attr('id', d.class + i % 2)
+                    .attr('id', selectionLineID)
                     .style("cursor", d.cursor)
-                    .call(drag);    
-            });  
+                    .call(drag);
+ 
+                var selectionLineRectLabel = svg.append("text")
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .attr("dx", '0.25em')
+                    .attr("dy", '-0.25em')
+                    .style("fill", '#58C7B6')
+                    .attr("id", selectionLineID + '-label')
+                    .text('');
+                    
+                var selectionLineRect = svg.append('rect')
+                    .attr('x', rectAttr[0])
+                    .attr('y', rectAttr[1])
+                    .attr('width', rectAttr[2])
+                    .attr('height', rectAttr[3])
+                    .attr('id', selectionLineID + '-rect')
+                    .attr('class', d.class)
+                    .style('opacity', 0.3)
+                    .style('fill', '#58C7B6')
+                    .style("cursor", 'crosshair')
+                    .call(drag);                                        
+                    
+            });
         }
         
         populateChartElements();

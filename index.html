@@ -8,14 +8,30 @@
     <link rel="stylesheet" href="./style/main.css">  
 </head>
 <body>
+    <div class="banner">
+        <div id="welcomeDiv">
+            <div id="banner-title-wrapper" class="banner-wrapper">
+                <div class="banner-title-item banner-title"><span>Blast Map</span></div>
+                <div class="banner-title-item banner-sub-title"><span>a half-century of our most earth-</span><br><span>rattling mining and nuclear tests</span></div>                
+            </div>
+            <div id="banner-content-wrapper">
+                <span>The Earth is covered in a network of seismic sensor to measure shakes and quakes. Sometimes, we humans are the cause. Here are those times…</span>
+            </div>
+            <div id="banner-button-wrapper">
+                <span>Ok, blast off!</span>
+            </div>
+        </div>
+    </div>
+    
     <div id='billboard'>
         <div id="yearDiv"></div>
         <div id="magDiv"></div>
     </div>
+    
     <div id='sidebar' class="hide">
         <div id="siderbar-title-wrapper">
-            <div class="sidebar-title">Blast Map</div>
-            <div class="sidebar-title sub-title">a half-century of our most earth-rattling mining and nuclear tests</div>
+            <div class="sidebar-title map-title">Blast Map</div>
+            <div class="sidebar-title sub-title map-sub-title">a half-century of our most earth-rattling mining and nuclear tests</div>
         </div>
         
         <div id="siderbar-bookmark-wrapper" class="wrapper">
@@ -39,12 +55,12 @@
                 <span>We are <a href="https://twitter.com/John_M_Nelson" target="_blank">John Nelson</a> and <a href="http://tofuballs.com/" target="_blank">Vanni Zhang</a>, product engineers at Esri. We see maps when we close our eyes at night, and, fortunately, when we open them in the day.</span>
             </div>        
         </div>      
-        
-
     </div>
-    <div id='chartDiv'>
+    
+    <div id='chartDiv' style="display: none;">
         <div id="divider"></div>
     </div>
+    
     <div id='mapContainer'>
         <div id='mapDiv'>
             <div id="navbar">

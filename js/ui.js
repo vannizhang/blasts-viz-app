@@ -93,7 +93,15 @@ $(document).ready(function(){
             populateChartElements();
             updateSliderPositions(queryParams); 
         }               
-    }        
+    } 
+    
+    $('.banner').on('click', function(){
+       $('.banner').hide(); 
+    });       
+    
+    $('#closeWelcomeDiv').on('click', function(){
+       $('.banner').hide(); 
+    });      
     
     console.info('Hi there, want to see the codes behind this app? it\'s on Github: https://github.com/vannizhang/blasts-viz-app' + '\n' + 'happy coding!');
 });

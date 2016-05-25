@@ -33,6 +33,81 @@ path {
     stroke: url(#temperature-gradient);
 }
 
+.banner {
+    position: absolute;
+    z-index: 1000;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(34,40,40,0.6);
+}
+
+#welcomeDiv {
+    position: absolute;
+    z-index: 1000;
+    left: 50%;
+    top: 50%;
+    width: 560px;
+    height: 400px;
+    margin-left: -280px;
+    margin-top: -200px;
+    /*border: 1px solid #004a76;*/
+    background-color: rgba(33,36,36,0.85);
+    color: rgba(88, 199, 182, 0.9);  
+}
+
+#banner-title-wrapper {
+    padding: 20px 50px 20px;
+    border-bottom: 1px solid rgba(88,199,182,0.2);
+}
+
+#banner-content-wrapper {
+    padding: 30px 120px 30px;
+    font-size: 22px; 
+    line-height: 30px;
+}
+
+#banner-button-wrapper {
+    margin: 0 50px;
+    padding: 10px 20px;
+    font-size: 44px;
+    text-align: center;
+    background-color: rgba(88,199,182,0.2);
+    cursor: pointer;
+}
+
+#banner-button-wrapper:hover {
+    background-color:rgba(88,199,182,0.35);
+}
+
+.banner-title-item {
+    display: inline-block;
+    margin-left: -4px;
+}
+
+.banner-title {
+    width: 40%;
+    /*background-color: #989898;*/
+}
+
+.banner-title span {
+    text-align: center;
+    font-size: 40px; 
+    font-weight: 100;  
+}
+
+.banner-sub-title{
+    width: 60%;
+    /*background-color: #636363;*/
+}
+
+.banner-sub-title span {
+    font-size: 16px; 
+    text-align: center;
+    margin: 0 0 0 20px;;
+}
+
 #mapDiv {
     top: 0;
     left: 0;
@@ -127,17 +202,14 @@ path {
     padding-bottom: 10px;
 }
 
-.sidebar-title {
+.map-title {
     text-align: center;
     font-size: 60px; 
     font-weight: 100;
-    /*font-weight: 100; */
-    /*text-shadow: 0px 0px 1px rgba(88, 199, 182, 1);*/
-    /*letter-spacing: -3; */
     margin: 0px 10px 5px;
 }
 
-.sidebar-title.sub-title {
+.map-sub-title {
     /*text-align: left;*/
     margin: 0px 30px;
     font-size: 16px; 
