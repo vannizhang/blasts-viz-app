@@ -1,3 +1,5 @@
+var toggleSideBar;
+
 var bookmarks = [
     {name: 'Just the Giants', hash: '#1963/2016/4.5/7.0/-8.83/26.04/1'},
     {name: 'Nevada’s Atomic Age', hash: '#1965/1992/1.9/6.7/-116.25/37.13/9'},
@@ -14,9 +16,8 @@ var bookmarks = [
 
 $(document).ready(function(){
     
-    var toggleSideBar = function(){
-        var sidebarWidth = ($('.meun-icon').hasClass('active')) ? '0' : '340px';
-                
+    toggleSideBar = function(){
+        var sidebarWidth = ($('.meun-icon').hasClass('active')) ? '0' : '340px';    
         $('#sidebar').css("width", sidebarWidth);
         $('#navbar').css("right", sidebarWidth);
         $('#attribution').css("right", sidebarWidth);
@@ -100,7 +101,7 @@ $(document).ready(function(){
     
     $('#closeWelcomeDiv').on('click', function(){
        $('.banner').hide(); 
-    });      
+    });    
     
     console.info('Hi there, want to see the codes behind this app? it\'s on Github: https://github.com/vannizhang/blasts-viz-app' + '\n' + 'happy coding!');
 });

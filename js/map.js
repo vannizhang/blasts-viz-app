@@ -142,6 +142,7 @@ require(["esri/map",
         mapLoaded = true;  
         $('#chartDiv').show(); 
         $('#attribution').show();
+        toggleSideBar();  
     });
     
     map.on("extent-change", changeHandler); 
