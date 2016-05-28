@@ -77,9 +77,9 @@ require(["esri/map",
     
     // add renderer to blasts layer
     var rd = new ClassBreaksRenderer(new SimpleMarkerSymbol(), "magnitude");
-    rd.addBreak(5, 7, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 6, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 255, 0, 0])),new Color([255, 255, 0, 0.8])));
-    rd.addBreak(3, 5, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([255, 83, 0, 0])),new Color([255, 83, 0, 0.7])));
-    rd.addBreak(0, 3, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([181, 0, 77, 0])),new Color([181, 0, 77, 0.6])));
+    rd.addBreak(5, 7, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 6, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([0, 0, 0, 0])).setWidth(10),new Color([255, 255, 0, 0.8])));
+    rd.addBreak(3, 5, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 5, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([0, 0, 0, 0])).setWidth(10),new Color([255, 83, 0, 0.7])));
+    rd.addBreak(0, 3, new SimpleMarkerSymbol(SimpleMarkerSymbol.STYLE_CIRCLE, 4, new SimpleLineSymbol().setStyle(SimpleLineSymbol.STYLE_SOLID).setColor(new Color([0, 0, 0, 0])).setWidth(10),new Color([181, 0, 77, 0.6])));
     blastLayer.renderer = rd;
     
     //populate blast points to map
@@ -99,11 +99,13 @@ require(["esri/map",
             item.graphic.attributes.datetime,
             item.graphic.attributes.magnitude
         ]);
+        highlightCircle(item.graphic.attributes.datetime, item.graphic.attributes.magnitude);
     });
     
     blastLayer.on('mouse-out', function(item){
         map.infoWindow.hide();
         map.getLayer('blastHighlightLayer').clear(); 
+        highlightCircle(null, null);
     })
 
     //add the hightlight point to map

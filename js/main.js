@@ -7,7 +7,7 @@ var selectionVLineRectLabelWidth = 20, selectionVLineRectLabelHeight = 15;
 var selectionHLineRectLabelWidth = 24, selectionHLineRectLabelHeight = 15;
 var selectionHRectOffset = 1;
 var initialHash = '#1965/2000/2.2/6.7/-115.79/37.63/5';
-var showBlastsInMapExtent, showAllCircles;
+var showBlastsInMapExtent, showAllCircles, highlightCircle;
 var queryParams, updateSliderPositions;
 var populateChartElements;
 
@@ -290,8 +290,20 @@ $(document).ready(function(){
             
             showAllBlasts = function(){
                 d3.selectAll(".circle").attr("display", null);  
-            }            
+            }   
             
+            highlightCircle = function(time, mag){
+                svg.select('.circle-highlight').remove();
+                svg.append("circle")
+                    .attr('class', 'circle-highlight')
+                    .attr("cx",function(d) {return xScale(time);})
+                    .attr("cy",function(d) {return yScale(mag);})
+                    .attr("r", 5)
+                    .style("fill", function(d) {
+                        return colorScale(mag);
+                    });
+            }  
+
             // Adds the svg canvas
             var svg = d3.select("#chartDiv")
                 .append("svg")
