@@ -1,4 +1,5 @@
 var toggleSideBar;
+var showSideBar = false;
 
 var bookmarks = [
     {name: 'Just the Giants', hash: '#1963/2016/4.5/7.0/-8.83/26.04/1'},
