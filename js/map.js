@@ -57,10 +57,10 @@ require(["esri/map",
         //     opacity: 0.8
         // });
         
-        var blastHighlightLayer = new GraphicsLayer({
-            id: 'blastHighlightLayer',
-            opacity: 0.8
-        });    
+        // var blastHighlightLayer = new GraphicsLayer({
+        //     id: 'blastHighlightLayer',
+        //     opacity: 0.8
+        // });    
                 
         // initialize map object
         map = new Map("mapDiv", {
@@ -73,9 +73,9 @@ require(["esri/map",
         map.addLayers([
             vtlayer,
             satelliteLayer,
-            referenceLayer,
+            referenceLayer
             // blastLayer,
-            blastHighlightLayer
+            // blastHighlightLayer
         ])
         
         // add renderer to blasts layer
@@ -118,14 +118,16 @@ require(["esri/map",
             
             blastLayer.on('mouse-out', function(item){
                 map.infoWindow.hide();
-                map.getLayer('blastHighlightLayer').clear(); 
+                // map.getLayer('blastHighlightLayer').clear(); 
+                map.graphics.clear();  
                 highlightCircle(null, null);
             });
         }
 
         //add the hightlight point to map
         addBlastHighlightSites = function(location){
-            map.getLayer('blastHighlightLayer').clear();  
+            map.graphics.clear();   
+
             var blastLocation = new Point(location[0], location[1]);
             var symbol = new SimpleMarkerSymbol(
             SimpleMarkerSymbol.STYLE_CIRCLE, 
@@ -140,7 +142,7 @@ require(["esri/map",
             };
 
             var graphic = new Graphic(blastLocation, symbol);    
-            map.getLayer('blastHighlightLayer').add(graphic);  
+            map.graphics.add(graphic);  
             
             showInfoWindow(blastLocation, attributes);
         }    

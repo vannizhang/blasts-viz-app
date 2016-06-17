@@ -393,7 +393,7 @@ $(document).ready(function(){
                     d3.select(this)
                         .attr("r", 2)
                         .style("opacity", 0.5);
-                    map.getLayer('blastHighlightLayer').clear(); 
+                    map.graphics.clear(); 
                     map.infoWindow.hide();
                 });    
                 
