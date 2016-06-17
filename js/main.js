@@ -12,7 +12,6 @@ var queryParams, updateSliderPositions;
 var populateChartElements;
 
 $(document).ready(function(){
-    
     // Get the blasts data
     d3.csv("./data/blast-data.csv", function(error, data) {
         
@@ -262,7 +261,7 @@ $(document).ready(function(){
                             d3.select(this).style("opacity", .2);
                         }
                     }); 
-                    addBlastSites(locations);             
+                    addBlastSites(locations);      
                 }
             }
             
@@ -490,4 +489,6 @@ function arraysEqual(arr1, arr2) {
     }
     return true;
 }
+
+
 
