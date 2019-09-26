@@ -41,7 +41,7 @@ require(["esri/map",
             initialZoomLevel = mapViewDataFromHash[2];
         }     
         
-        var vtlayer = new VectorTileLayer("https://www.arcgis.com/sharing/rest/content/items/b187ae2ee9884d90a1fb09e95ceb003d/resources/styles/root.json");
+        // var vtlayer = new VectorTileLayer("https://www.arcgis.com/sharing/rest/content/items/b187ae2ee9884d90a1fb09e95ceb003d/resources/styles/root.json");
         
         var satelliteLayer = new ArcGISTiledMapServiceLayer("https://fly.maptiles.arcgis.com/arcgis/rest/services/World_Imagery_Firefly/MapServer", {
             visible: true
