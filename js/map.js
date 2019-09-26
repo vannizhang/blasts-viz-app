@@ -44,13 +44,14 @@ require(["esri/map",
         var vtlayer = new VectorTileLayer("https://www.arcgis.com/sharing/rest/content/items/b187ae2ee9884d90a1fb09e95ceb003d/resources/styles/root.json");
         
         var satelliteLayer = new ArcGISTiledMapServiceLayer("https://fly.maptiles.arcgis.com/arcgis/rest/services/World_Imagery_Firefly/MapServer", {
-            visible: false
+            visible: true
         });  
         satelliteLayer.opacity = 0.3;    
         
         var referenceLayer = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer", {
-            visible: false
-        });   
+            visible: true,
+            opacity: 0.5
+        });
         
         // var blastLayer = new GraphicsLayer({
         //     id: 'blastLayer',
@@ -71,7 +72,7 @@ require(["esri/map",
         });
         
         map.addLayers([
-            vtlayer,
+            // vtlayer,
             satelliteLayer,
             referenceLayer
             // blastLayer,
@@ -201,13 +202,13 @@ require(["esri/map",
             }
             
             if(lod >= 9){
-                vtlayer.opacity = .5;
-                referenceLayer.show();
-                satelliteLayer.show();
+                // vtlayer.opacity = .5;
+                // referenceLayer.show();
+                // satelliteLayer.show();
             } else {
-                vtlayer.opacity = 1;
-                referenceLayer.hide();
-                satelliteLayer.hide();
+                // vtlayer.opacity = 1;
+                // referenceLayer.hide();
+                // satelliteLayer.hide();
             }
 
         } 
