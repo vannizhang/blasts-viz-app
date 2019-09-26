@@ -43,12 +43,12 @@ require(["esri/map",
         
         var vtlayer = new VectorTileLayer("https://www.arcgis.com/sharing/rest/content/items/b187ae2ee9884d90a1fb09e95ceb003d/resources/styles/root.json");
         
-        var satelliteLayer = new ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer", {
+        var satelliteLayer = new ArcGISTiledMapServiceLayer("https://fly.maptiles.arcgis.com/arcgis/rest/services/World_Imagery_Firefly/MapServer", {
             visible: false
         });  
         satelliteLayer.opacity = 0.3;    
         
-        var referenceLayer = new ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer", {
+        var referenceLayer = new ArcGISTiledMapServiceLayer("https://services.arcgisonline.com/arcgis/rest/services/Reference/World_Boundaries_and_Places/MapServer", {
             visible: false
         });   
         
